@@ -8,6 +8,7 @@ const MunicipioList = ({ user,municipioList,setMensaje, getMunicipios,municipio,
 
 
   const [nombre, setNombre] = useState();
+  
 
   const [estado, setEstado] = useState();
   

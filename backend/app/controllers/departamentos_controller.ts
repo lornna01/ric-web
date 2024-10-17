@@ -9,7 +9,7 @@ export default class DepartamentosController {
     return response.json(data);
   }
   
-   
+    
   async store({ request, response }: HttpContext) {
     const data = request.only(['nombre', 'estado']);
     const existe = await Departamento.query().where('nombre', data.nombre).first();

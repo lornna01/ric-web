@@ -125,7 +125,7 @@ export default class AuthController {
               Body: [
                 ElasticEmail.BodyPart.constructFromObject({
                   ContentType: "HTML",
-                  Content: `<strong>${codigo}</strong> es su código de verificación`
+                  Content: `<strong>${codigo}</strong> es su código de verificación y acceso.`
                 })
               ],
               Subject: "OTP RIC",

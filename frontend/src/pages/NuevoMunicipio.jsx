@@ -118,7 +118,7 @@ const NuevoMunicipio = () => {
 
     try {
       const response = await axiosInstance.put(
-        `${import.meta.env.VITE_API_URL}/municipios/${nombre}`,
+        `${import.meta.env.VITE_API_URL}/municipios/${municipio.id}`,
         {
           usuario_id: user?.user?.id,
           nombre,
@@ -128,31 +128,29 @@ const NuevoMunicipio = () => {
       );
 
       if (response.status === 200) {
-        toast.success("Municipio actualizado con éxito!!")
-        //setMensaje("Vehículo creado con éxito!!");
-        setEditing(false)
-        //navigate('/home');
-        window.location.reload()
+        toast.success("Actualizado con éxito!!");
+        setEditing(false);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);  
       }
-      setLoading(false);
-      setError();
     } catch (error) {
-      if (error.response.status === 400) {
-        setError(error.response.data.message);
-
-  
+      if (error.response) {
+        if (error.response.status === 400) {
+          setError(error.response.data.message);
+        } else if (error.response.status >= 400 && error.response.status < 500) {
+          setError("Error inesperado");
+        } else if (error.response.status >= 500) {
+          setError("Error en el servidor");
+        }
+      } else {
+        setError("Error de conexión");
       }
-      if (error.status >= 400 && error.response.status < 500) {
-        setError("Error inesperado");
-      }
-      if (error.status >= 500) {
-        setError("Ya existe");
-      }
-      //setError(error.message);
-      setLoading(false);
       console.log(error);
+    } finally {
+      setLoading(false);
     }
-
+  
     if (!error) {
       const closeButtonElement = document.getElementById("cerrarModal");
       if (closeButtonElement) {
@@ -289,7 +287,7 @@ const NuevoMunicipio = () => {
       }
     }
   };
- 
+  
   useEffect(() => {
     getDepartamentos();
   }, []);
