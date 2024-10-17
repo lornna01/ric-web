@@ -8,16 +8,17 @@ const Footer = () => {
                 <div className="container-xxl">
                   <div className="footer-container d-flex align-items-center justify-content-between py-3 flex-md-row flex-column">
                     <div className="text-body mb-2 mb-md-0">
-                      © 2024 , hecho con{" "}
+                      © 2024, RIC - DIRECCIÓN MUNICIPAL, PETÉN. {" "}
+                       
                       <span className="text-danger">
-                        <i className="tf-icons mdi mdi-heart" />
+                        <i className="tf-icons  mdi mdi-flower-poppy" />
                       </span>{" "}
-                      por{" "}
+                      
                       <a
                         href="#"
                         className="footer-link fw-medium"
                       >
-                        Lornaa Yeraldy Juarez
+                        Lornna Yeraldy Aldana
                       </a>
                     </div>
                     <div className="d-none d-lg-inline-block">
@@ -26,7 +27,7 @@ const Footer = () => {
                         href="#"
                         className="footer-link"
                       >
-                        Contacto
+                        1690-20-5944
                       </a>
                     </div>
                   </div>

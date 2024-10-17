@@ -437,7 +437,7 @@ const exportarExcel = async () => {
                                                 </div>
                                             </form>
                                             <div className="row my-4 text-center">
-                                                {user.user.rol.nombre === "ADMINISTRADOR" && (
+                                                {[ "GERENTE", "TECNICO-ARCHIVO"].includes(user.user.rol.nombre) && (
                                                     <div className="col-12">
                                                         {loadingReportes ? (
                                                             <div className="spinner-grow text-success" role="status"></div>

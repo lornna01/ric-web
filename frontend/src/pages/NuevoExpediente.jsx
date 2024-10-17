@@ -282,7 +282,15 @@ const NuevoExpediente = () => {
                               id="titular"
                               placeholder="Juan Pablo Ramirez"
                               value={titular}
-                              onChange={(e) => setTitular(e.target.value)}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                // Validar que solo contenga letras y espacios, que no sea solo un espacio en blanco,
+                                // y que el primer carácter no sea un espacio
+                                const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ][A-Za-zÁÉÍÓÚáéíóúÑñ\s]*$/; // El primer carácter debe ser letra
+                                if (value.trim() === "" || regex.test(value)) { // Permite vacío pero no empieza con espacio
+                                  setTitular(value);
+                                }
+                              }}
                             />
                           <label for="exampleFormControlSelect1">
                             Titular
@@ -293,6 +301,7 @@ const NuevoExpediente = () => {
                             <select
                               disabled={departamentos<=0}
                               id="departamento"
+                              maxLength={2}
                               class="form-select form-select-lg"
                               value={idDepartamento}
                               onChange={(e) => setIdDepartamento(e.target.value)}
@@ -308,7 +317,7 @@ const NuevoExpediente = () => {
                               );
                             })}
                             </select>
-                            <label htmlFor="departamento">Departamento</label>
+                            <label htmlFor="departamento">Depto.</label>
                             <div
                               data-lastpass-icon-root=""
                               style={{
@@ -323,6 +332,7 @@ const NuevoExpediente = () => {
                             <select
                               disabled={idDepartamento<=0}
                               id="municipio"
+                              maxLength={2}
                               class="form-select form-select-lg"
                               value={idMunicipio}
                               onChange={(e) => setIdMunicipio(e.target.value)}
@@ -352,11 +362,12 @@ const NuevoExpediente = () => {
 
                           <div className="form-floating form-floating-outline mb-4">
                             <input
-                              type="text"
-                              maxLength={10}
+                              type="number"
+                              maxLength={2}
                               className="form-control"
                               id="poligono"
-                              placeholder="00"
+                              min={0}
+                              placeholder="01"
                               value={poligono}
                               onChange={(e) => setPoligono(e.target.value)}
                             />
@@ -373,11 +384,12 @@ const NuevoExpediente = () => {
                           </div>
                           <div className="form-floating form-floating-outline mb-4">
                             <input
-                              type="text"
+                              type="number"
                               maxLength={5}
+                              min={0}
                               className="form-control"
                               id="predio"
-                              placeholder="00000"
+                              placeholder="00001"
                               value={predio}
                               onChange={(e) => setPredio(e.target.value)}
                             />
@@ -391,7 +403,10 @@ const NuevoExpediente = () => {
                                 float: "left !important",
                               }}
                             />
-                          </div>
+                          </div>                          
+                        </div>
+
+                        <div class="input-group">                          
                           <div className="form-floating form-floating-outline mb-4">
                             <input
                               type="text"
@@ -402,7 +417,7 @@ const NuevoExpediente = () => {
                               value={estanteria}
                               onChange={(e) => setEstanteria(e.target.value)}
                             />
-                            <label htmlFor="estanteria">Estantería</label>
+                            <label htmlFor="estanteria">Estante</label>
                             <div
                               data-lastpass-icon-root=""
                               style={{
@@ -485,6 +500,7 @@ const NuevoExpediente = () => {
                             />
                           </div>
                         </div>
+                        
                         <div className="form-floating form-floating-outline mb-4">
                           <textarea
                             id="basic-default-message"

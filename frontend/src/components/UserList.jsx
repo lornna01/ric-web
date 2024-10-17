@@ -88,11 +88,13 @@ const save = async () => {
       foto
     }
     await saveUser(data,dpi);
+    window.location.reload();
     setContrasena('')
     setContrasena2('')
     setCorreo('')
     setEstado('')
     setIdRol('')
+    
     if (!error) {
       const closeButtonElement = document.getElementById('cerrarModal');
       if (closeButtonElement) {
@@ -216,10 +218,23 @@ const save = async () => {
         </div>
       )}
 
+        {/* Texto adicional con ícono para recargar */}
+  <h2 className="text-center mt-3">
+    <span 
+      className="mdi mdi-replay" 
+      style={{ cursor: 'pointer' }} 
+      onClick={() => window.location.reload()}
+    >
+      USUARIOS, DIRECCIÓN MUNICIPAL PETÉN
+    </span>
+  </h2>
+
       <div className="table-responsive">
         <table className="table">
           <thead className="table-light">
+                   
             <tr>
+                    
               <th className="text-truncate">Usuario</th>
               <th className="text-truncate">Correo</th>
               <th className="text-truncate">Rol</th>
@@ -246,7 +261,7 @@ const save = async () => {
                         {item.foto ? 
                         <img className="mt-3" src={`data:image/png;base64,${item.foto}`} width='100%' />:
                         <img
-                          src="/img/avatars/1.png"
+                          src="/img/ric.jpeg"
                           alt={`${item.nombre}`} // O item.username, dependiendo de tus datos
                           className="rounded-circle"
                         />}
@@ -359,7 +374,7 @@ const save = async () => {
                   <input
                      value={dpi}
                      onChange={(e) => setDpi(e.target.value)}
-                    type="text"
+                    type="number"
                     id="dpi"
                     className="form-control"
                     placeholder="Ingrese su DPI"
@@ -536,8 +551,9 @@ const save = async () => {
                   <input
                      value={dpi}
                      onChange={(e) => setDpi(e.target.value)}
-                    type="text"
+                    type="number"
                     id="dpi"
+                    min={0}
                     className="form-control"
                     placeholder="Ingrese su DPI"
                   />

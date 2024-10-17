@@ -11,16 +11,18 @@ import Footer from "../components/Footer";
 import ExpedienteList from "../components/ExpedienteList";
 import toast from "react-hot-toast";
 
-
-
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const { logout } = useAuth();
   const { user } = useAuth();
-  
-  
+  const navigate = useNavigate();
+
+
+
+
   const [userList, setUserList] = useState([]);
-  
+
   const [expedienteList, setExpedienteList] = useState([]);
   const [borradorList, setBorradorList] = useState([]);
   const [enRevisionList, setEnRevisionList] = useState([]);
@@ -36,7 +38,7 @@ const Home = () => {
     baseURL: `${import.meta.env.VITE_API_URL}`, // URL base de tu API
     headers: {
       'Content-Type': 'application/json',
-      'Authorization':`${user.type} ${user.token}` // Token de autorización
+      'Authorization': `${user.type} ${user.token}` // Token de autorización
     }
   });
 
@@ -82,7 +84,7 @@ const Home = () => {
       await setCompletosList(comple)
       await setEnRevisionList(revi)
       await setBorradorList(borra)
-    
+
       //
       setLoading(false);
     } catch (error) {
@@ -95,7 +97,7 @@ const Home = () => {
       //console.log(error.response.status);
     }
   };
-  const saveUser = async (user,dpi) => {
+  const saveUser = async (user, dpi) => {
     setLoading(true);
 
     try {
@@ -111,10 +113,10 @@ const Home = () => {
 
       if (response.status === 201) {
         const responsePersona = await axiosInstance.post(`${import.meta.env.VITE_API_URL}/personas`,
-          {name:user.nombre,dpi}
+          { name: user.nombre, dpi }
         );
         if (responsePersona.status == 201) {
-          
+
           toast.success("Persona registrada")
           setError('');
         } else {
@@ -137,13 +139,13 @@ const Home = () => {
     }
   };
 
-  const updateUser = async (user,dpi) => {
+  const updateUser = async (user, dpi) => {
     setLoading(true);
 
     let data = {
       nombre: user.nombre,
       email: user.email,
-      dpi : user.dpi,
+      dpi: user.dpi,
       rol_id: user.id_rol,
       estado: user.estado,
       foto: user.foto,
@@ -222,18 +224,37 @@ const Home = () => {
     getUsers();
     getExpedientes();
     if (editing) {
-      
+
     }
   }, []);
+
+
+  useEffect(() => {
+    if (user.user.rol.nombre === "GERENTE") {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
+
+
+  useEffect(() => {
+    if (user.user.rol.nombre === "ASISTENTE-ADMINISTRATIVO") {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
+
+
+
+
+
 
   return (
     <>
       <div className="layout-wrapper layout-content-navbar">
         <div className="layout-container">
-        <MenuLateral/>
+          <MenuLateral />
           {/* Layout container */}
           <div className="layout-page">
-            
+
             {/* / Navbar */}
             <NavBar />
             {/* Content wrapper */}
@@ -241,17 +262,7 @@ const Home = () => {
               {/* Content */}
 
               <div className="container-xxl flex-grow-1 container-p-y">
-                <div className="row my-4 text-center">
-                  {/* Deposit / Withdraw */}
-                  {/* Data Tables */}
-                  {user.user.rol.nombre == "ADMINISTRADOR" && (
-                    <div className="col-12">
-                      <ExpedienteList />
-                    </div>
-                  )}
-
-                  {/*/ Data Tables */}
-                </div>
+                {/* Mostrar el contenido basado en el rol */}
                 <div className="row my-4 text-center">
                   {/* Deposit / Withdraw */}
                   {/* Data Tables */}
@@ -273,14 +284,29 @@ const Home = () => {
                         deleteUser={deleteUser}
                         editing={editing}
                         setEditing={setEditing}
-                      />:(<div className="spinner-grow text-success" role="status">
-                    </div>)}
+                      /> : (<div className="spinner-grow text-success" role="status">
+                      </div>)}
                     </div>
                   )}
 
                   {/*/ Data Tables */}
                 </div>
-                  <div className="row gy-4">
+
+                <div className="row my-4 text-center">
+                  {/* Deposit / Withdraw */}
+                  {/* Data Tables */}
+                  {user.user.rol.nombre == "TECNICO-ARCHIVO" && (
+                    <div className="col-12">
+                      <ExpedienteList />
+                    </div>
+
+                  )}
+
+                  {/*/ Data Tables */}
+
+                  {user.user.rol.nombre == "TECNICO-ARCHIVO" && (
+                    
+                    <div className="row gy-4">
                     {/* Congratulations card */}
                     <div className="col-md-12 col-lg-4">
                       <div className="card">
@@ -288,7 +314,7 @@ const Home = () => {
                           <h4 className="card-title mb-1">
                             Total expedientes 🚀!
                           </h4>
-                          <h4 className="text-primary mb-1">{(expedienteList.length).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") }</h4>
+                          <h4 className="text-primary mb-1">{(expedienteList.length).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</h4>
                           <Link
                             to="/expedientes/nuevo"
                             className="btn btn-sm btn-primary waves-effect waves-light"
@@ -307,9 +333,9 @@ const Home = () => {
                             <h5 className="card-title m-0 me-2">
                               Registro por estado
                             </h5>
-                            
+
                           </div>
-                          
+
                         </div>
                         <div className="card-body">
                           <div className="row">
@@ -322,7 +348,7 @@ const Home = () => {
                                 </div>
                                 <div className="ms-3">
                                   <div className="small mb-1">BORRADORES</div>
-                                  <h5 className="mb-0">{(borradorList.length).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") }</h5>
+                                  <h5 className="mb-0">{(borradorList.length).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</h5>
                                 </div>
                               </div>
                             </div>
@@ -335,7 +361,7 @@ const Home = () => {
                                 </div>
                                 <div className="ms-3">
                                   <div className="small mb-1">En Revisión</div>
-                                  <h5 className="mb-0">{(enRevisionList.length).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") }</h5>
+                                  <h5 className="mb-0">{(enRevisionList.length).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</h5>
                                 </div>
                               </div>
                             </div>
@@ -348,7 +374,7 @@ const Home = () => {
                                 </div>
                                 <div className="ms-3">
                                   <div className="small mb-1">Completos</div>
-                                  <h5 className="mb-0">{(completosList.length).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") }</h5>
+                                  <h5 className="mb-0">{(completosList.length).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</h5>
                                 </div>
                               </div>
                             </div>
@@ -357,19 +383,61 @@ const Home = () => {
                       </div>
                     </div>
                     {/*/ Transactions */}
-                    
-                    
-                   
-                   
-                  </div>
-                
-                {user.user.rol.nombre == "ADMINISTRACION" && (
-                  <div className="row gy-4">administracion</div>
-                )}
 
-                {user.user.rol.nombre == "ARCHIVO" && (
-                  <div className="row gy-4">ARCHIVO</div>
-                )}
+
+
+
+                  </div>
+
+                  )}
+                  
+
+                </div>
+
+
+
+
+
+
+
+
+
+
+                <div className="row my-4 text-center">
+                  {/* Deposit / Withdraw */}
+                  {/* Data Tables */}
+                  {user.user.rol.nombre == "ASITENTE-ADMINISTRATIVO" && (
+                    <div className="row gy-4">ADMINISTRACION</div>
+                  )}
+
+
+                  {/*/ Data Tables */}
+                </div>
+
+
+
+                <div className="row my-4 text-center">
+                  {/* Deposit / Withdraw */}
+                  {/* Data Tables */}
+                  {user.user.rol.nombre == "ASITENTE-ADMINISTRATIVO" && (
+                    <div className="row gy-4">ADMINISTRACION</div>
+                  )}
+
+
+                  {/*/ Data Tables */}
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
               </div>
               {/* / Content */}
               <Footer />

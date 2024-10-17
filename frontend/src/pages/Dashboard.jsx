@@ -33,12 +33,14 @@ const Dashboard = () => {
                     <div className="card-body d-flex justify-content-between align-items-center">
                       
                       <div className="d-flex align-items-center" style={{ width: "100%", height: "100vh" }}>
+                        
+
                         <iframe 
-                            title="ric-pbi"
-                            width="100%" 
-                            height="100%" 
-                            src="https://app.powerbi.com/view?r=eyJrIjoiYmNlMmJkMjQtYmNkZS00ZmFmLThmNTgtYTNlNDAyNGQwZWJjIiwidCI6IjVmNTNiNGNlLTYzZDQtNGVlOC04OGQyLTIyZjBiMmQ0YjI3YSIsImMiOjR9" frameBorder="0" allowFullScreen="true">
-                            
+                          title="reportes" 
+                          width="100%" 
+                          height="100%" 
+                          src="https://app.powerbi.com/view?r=eyJrIjoiZjg3YTI4ZTUtNDY5Yi00NTYyLWIxZTQtYTdjMzFjZTRlMTZjIiwidCI6IjVmNTNiNGNlLTYzZDQtNGVlOC04OGQyLTIyZjBiMmQ0YjI3YSIsImMiOjR9" frameborder="0" allowFullScreen="true">
+                          
                         </iframe>
                       </div>
 

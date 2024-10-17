@@ -51,7 +51,7 @@ const VehiculoList = ({ user,vehiculoList,setMensaje, getVehiculos,vehiculo,setV
     } else if (!pdf) {
       toast.error("Falta el pdf");
       return;
-    } else if (!saldo) {
+    } else if (!denominacion) {
       toast.error("Ingrese el saldo");
       return;
     } else if (!fechaAsignacion) {
@@ -63,7 +63,7 @@ const VehiculoList = ({ user,vehiculoList,setMensaje, getVehiculos,vehiculo,setV
 
     try {
       const response = await axiosInstance.post(
-        `${import.meta.env.VITE_API_URL}/combustibles`,
+        `${import.meta.env.VITE_API_URL}/combustible`,
         {
           usuario_id: user?.user?.id,
           fecha:fechaAsignacion,
@@ -73,7 +73,7 @@ const VehiculoList = ({ user,vehiculoList,setMensaje, getVehiculos,vehiculo,setV
           chofer: choferActual,
           cupon_desde:cuponDesde,
           cupon_hasta:cuponHasta,
-          saldo,
+          denominacion,
           estado_cupon: estadoCupon,
           observacion_cupon:observacionCupon,
           pdf

@@ -15,7 +15,7 @@ const CombustibleList = ({ user,combustibleList,setMensaje,vehiculo, getCombusti
   
   const [kilometrajeInicial, setKilometrajeInicial] = useState();
   const [kilometrajeFinal, setKilometrajeFinal] = useState();
-  const [saldo, setSaldo] = useState();
+  const [denominacion, setDenominacion] = useState();
   const [cuponDesde, setCuponDesde] = useState();
   const [cuponHasta, setCuponHasta] = useState();
   const [estadoCupon, setEstadoCupon] = useState('NUEVO');
@@ -23,6 +23,12 @@ const CombustibleList = ({ user,combustibleList,setMensaje,vehiculo, getCombusti
   const [pdf, setPdf] = useState();
   const [choferActual, setChoferActual] = useState(vehiculo?.chofer);
   const [fechaAsignacion, setFechaAsignacion] = useState();
+
+  const [pdfFile, setPdfFile] = useState(null);
+  const [pdfs, setPdfs] = useState({});
+
+
+
   
   const axiosInstance = axios.create({
     baseURL: `${import.meta.env.VITE_API_URL}`, // URL base de tu API
@@ -49,6 +55,8 @@ const CombustibleList = ({ user,combustibleList,setMensaje,vehiculo, getCombusti
   const save = async () => {
     setMensaje("");
     setError("");
+    
+    // Validaciones
     if (!choferActual) {
       toast.error("Ingrese el chofer actual");
       return;
@@ -61,8 +69,97 @@ const CombustibleList = ({ user,combustibleList,setMensaje,vehiculo, getCombusti
     } else if (!kilometrajeInicial) {
       toast.error("Ingrese kilometraje inicial");
       return;
-    } else if (!saldo) {
-      toast.error("Ingrese el saldo");
+    } else if (!denominacion) {
+      toast.error("Ingrese el denominacion");
+      return;
+    } else if (!fechaAsignacion) {
+      toast.error("Ingrese fecha de asignación");
+      return;
+    }
+  
+    setLoading(true);
+  
+    try {
+      const response = await axiosInstance.post(
+        `${import.meta.env.VITE_API_URL}/combustible`,
+        {
+          usuario_id: user?.user?.id,
+          fecha: fechaAsignacion,
+          placa: vehiculo?.placa,
+          kilometraje_inicial: kilometrajeInicial,
+          kilometraje_final: kilometrajeFinal,
+          chofer: choferActual,
+          cupon_desde: cuponDesde,
+          cupon_hasta: cuponHasta,
+          denominacion,
+          estado_cupon: estadoCupon,
+          observacion_cupon: observacionCupon,
+          pdf
+        }
+      );
+  
+      if (response.status === 201) {
+        toast.success("Asignación creada con éxito!!");
+        window.location.reload();
+      }
+      setLoading(false);
+      setError("");
+    } catch (error) {
+      setLoading(false);
+  
+      // Manejo de errores
+      if (error.response) {
+        if (error.response.status === 400) {
+          setError(error.response.data.message);
+        } else if (error.response.status === 409) {
+          // Maneja el conflicto aquí (por ejemplo, registro ya existente)
+          setError("Este registro ya existe. Verifica los datos.");
+          toast.error("Este registro ya existe. Verifica los datos.");
+        } else if (error.response.status >= 500) {
+          setError("Error en el servidor.");
+        } else {
+          setError("Error inesperado.");
+        }
+      } else {
+        setError("Error de red.");
+      }
+      
+      console.log(error);
+    }
+  
+    // Cierra el modal si no hay errores
+    if (!error) {
+      const closeButtonElement = document.getElementById("cerrarModal");
+      if (closeButtonElement) {
+        closeButtonElement.click();
+      }
+      setLoading(false);
+    }
+  };
+
+
+
+  
+
+
+  /*
+  const save = async () => {
+    setMensaje("");
+    setError("");
+    if (!choferActual) {
+      toast.error("Ingrese el chofer actual");
+      return;
+    } else if (!cuponDesde) {
+      toast.error("Ingrese los cupones desde");
+      return;
+    } else if (!cuponHasta) {
+      toast.error("Ingrese los cupones hasta");
+      return;
+    } else if (!kilometrajeInicial) {
+      toast.error("Ingrese kilometraje inicial");
+      return;
+    } else if (!denominacion) {
+      toast.error("Ingrese el denominacion");
       return;
     } else if (!fechaAsignacion) {
       toast.error("Ingrese efecha de asignación");
@@ -83,7 +180,7 @@ const CombustibleList = ({ user,combustibleList,setMensaje,vehiculo, getCombusti
           chofer: choferActual,
           cupon_desde:cuponDesde,
           cupon_hasta:cuponHasta,
-          saldo,
+          denominacion,
           estado_cupon: estadoCupon,
           observacion_cupon:observacionCupon,
           pdf
@@ -122,7 +219,7 @@ const CombustibleList = ({ user,combustibleList,setMensaje,vehiculo, getCombusti
       setLoading(false);
     }
   };
-
+*/
   const saveKilo = async (id,kilo) => {
     setMensaje("");
     setError("");
@@ -135,7 +232,7 @@ const CombustibleList = ({ user,combustibleList,setMensaje,vehiculo, getCombusti
 
     try {
       const response = await axiosInstance.put(
-        `${import.meta.env.VITE_API_URL}/combustibles/${id}`,
+        `${import.meta.env.VITE_API_URL}/combustible/${id}`,
         {
           usuario_id: user?.user?.id,
           kilometraje_final:kilo,
@@ -178,6 +275,33 @@ const CombustibleList = ({ user,combustibleList,setMensaje,vehiculo, getCombusti
     }
   };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+  
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
@@ -209,10 +333,24 @@ const CombustibleList = ({ user,combustibleList,setMensaje,vehiculo, getCombusti
     } 
     
   }
+
+
+  const handleFile = (event, id) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPdfs((prevPdfs) => ({
+        ...prevPdfs,
+        [id]: reader.result.split(',')[1] // Guardar el PDF en base64 por ID
+      }));
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  };
+
   
-
-
-
 
   return (
     <div className="card">
@@ -233,7 +371,8 @@ const CombustibleList = ({ user,combustibleList,setMensaje,vehiculo, getCombusti
               <th className="text-truncate">Km Final</th>
               <th className="text-truncate">Km Recorridos</th>
               <th className="text-truncate">Cupones</th>
-              <th className="text-truncate">Saldo</th>
+              <th className="text-truncate">Denominación (Q.)</th>
+              
               <th className="text-truncate">
                 Acciones
               </th>
@@ -285,10 +424,15 @@ const CombustibleList = ({ user,combustibleList,setMensaje,vehiculo, getCombusti
                   </td>
                  
                   <td>
-                    {item.saldo.toLocaleString('es-ES', { style: 'currency', currency: 'USD' })}
+                    {item.denominacion.toLocaleString('es-ES', { style: 'currency', currency: 'Q' })}
                   </td>
 
+                  
+
                   <td>
+
+
+                  
                     
                     
                     {item.pdf && <button 
@@ -302,8 +446,9 @@ const CombustibleList = ({ user,combustibleList,setMensaje,vehiculo, getCombusti
                     <button
                       onClick={() => {
                         deleteConfirmComb(item)
+                      
                       }}
-                      disabled={item.rol?.nombre == "ADMINISTRADOR"}
+                      disabled={item.rol?.nombre == "ASISTENTE-ADMINISTRATIVO"}
                       type="button"
                       className="btn rounded-pill btn-danger m-1"
                     >
@@ -432,15 +577,15 @@ const CombustibleList = ({ user,combustibleList,setMensaje,vehiculo, getCombusti
               <div className="row g-2">
                 <div className="col mb-0">
                   <label htmlFor="contrasena" className="form-label">
-                  Saldo
+                  Denominación
                   </label>
                   <input
-                     value={saldo}
-                     onChange={(e) => setSaldo(e.target.value)}
+                     value={denominacion}
+                     onChange={(e) => setDenominacion(e.target.value)}
                     type="number"
                     id="contrasena"
                     className="form-control"
-                    placeholder="Ingrese un saldo"
+                    placeholder="Ingrese la cantidad Q."
                   />
                 </div>
                 <div className="col mb-0">

@@ -254,7 +254,7 @@ const NuevoVehiculo = () => {
     setLoading(true);
 
     try {
-      const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/combustibles?placa=${placa}`);
+      const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/combustible?placa=${placa}`);
       
 
       if (response.status === 200) {
@@ -400,7 +400,7 @@ const NuevoVehiculo = () => {
     setLoading(true);
 
     try {
-      const response = await axiosInstance.delete(`${import.meta.env.VITE_API_URL}/combustibles/${combustib.id}`);
+      const response = await axiosInstance.delete(`${import.meta.env.VITE_API_URL}/combustible/${combustib.id}`);
       
       if (response.status === 200) {
         toast.success("Item eliminado con éxito!!")
@@ -502,60 +502,62 @@ const NuevoVehiculo = () => {
                             Propietario del vehículo
                           </label>
                       </div>
-                        <div class="input-group">
-                        <div class="form-floating form-floating-outline mb-4">
-                      <input
-                              type="text"
-                              maxLength={60}
-                              className="form-control"
-                              id="titular"
-                              placeholder="ABC123"
-                              value={placa}
-                              onChange={(e) => setPlaca(e.target.value.toUpperCase())}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                  if (placa.length>3) {
-                                    findByPlaca()
-                                  } else {
-                                    toast.error('Ingrese una placa válida')
-                                  }
-                                }
-                                
-                              }}
-                            />
-                          <label for="exampleFormControlSelect1">
-                            Placa del vehículo
-                          </label>
-                      </div>
-                      <div class="form-floating form-floating-outline mb-4">
-                      <input
-                              type="number"
-                              maxLength={4}
-                              className="form-control"
-                              id="titular"
-                              placeholder="2024"
-                              value={modelo}
-                              onChange={(e) => setModelo(e.target.value)}
-                            />
-                          <label for="exampleFormControlSelect1">
-                            Modelo del Vehículo
-                          </label>
-                      </div>
-                      <div class="form-floating form-floating-outline mb-4">
-                      <input
-                              type="text"
-                              maxLength={60}
-                              className="form-control"
-                              id="titular"
-                              placeholder="Juan Pablo Ramirez"
-                              value={chofer}
-                              onChange={(e) => setChofer(e.target.value)}
-                            />
-                          <label for="exampleFormControlSelect1">
-                            Chofer(usuario asignado)
-                          </label>
-                      </div>
-                        </div>
+                      <div className="input-group">
+    <div className="row g-3 mb-4">
+        <div className="col-12 col-md-4">
+            <div className="form-floating">
+                <input
+                    type="text"
+                    maxLength={60}
+                    className="form-control"
+                    id="placa"
+                    placeholder="ABC123"
+                    value={placa}
+                    onChange={(e) => setPlaca(e.target.value.toUpperCase())}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            if (placa.length > 3) {
+                                findByPlaca();
+                            } else {
+                                toast.error('Ingrese una placa válida');
+                            }
+                        }
+                    }}
+                />
+                <label htmlFor="placa">Placa del vehículo</label>
+            </div>
+        </div>
+        <div className="col-12 col-md-4">
+            <div className="form-floating">
+                <input
+                    type="number"
+                    maxLength={4}
+                    className="form-control"
+                    id="modelo"
+                    placeholder="2024"
+                    value={modelo}
+                    onChange={(e) => setModelo(e.target.value)}
+                />
+                <label htmlFor="modelo">Modelo del Vehículo</label>
+            </div>
+        </div>
+        <div className="col-12 col-md-4">
+            <div className="form-floating">
+                <input
+                    type="text"
+                    maxLength={60}
+                    className="form-control"
+                    id="chofer"
+                    placeholder="Juan Pablo Ramirez"
+                    value={chofer}
+                    onChange={(e) => setChofer(e.target.value)}
+                />
+                <label htmlFor="chofer">Chofer (usuario asignado)</label>
+            </div>
+        </div>
+    </div>
+</div>
+
                         <div className="form-floating form-floating-outline mb-4">
                           <textarea
                             id="basic-default-message"
@@ -635,7 +637,7 @@ const NuevoVehiculo = () => {
                       <div className="row my-4 text-center">
                       {/* Deposit / Withdraw */}
                       {/* Data Tables */}
-                      {user.user.rol.nombre == "ADMINISTRADOR" && (
+                      {user.user.rol.nombre == "ASISTENTE-ADMINISTRATIVO" && (
                         <div className="col-12">
                             {!loadingVehiculos ? <VehiculoList
                               deleteVehiculo ={deleteVehiculo}

@@ -29,7 +29,7 @@ export default class Combustible extends BaseModel {
   declare cupon_hasta: number
   
   @column()
-  declare saldo: number
+  declare denominacion: number
   
   @column()
   declare estado_cupon: string

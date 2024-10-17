@@ -306,7 +306,7 @@ const NuevoEstadoExpediente = () => {
                       <div className="row my-4 text-center">
                       {/* Deposit / Withdraw */}
                       {/* Data Tables */}
-                      {user.user.rol.nombre == "ADMINISTRADOR" && (
+                      {user.user.rol.nombre == "TECNICO-ARCHIVO" && (
                         <div className="col-12">
                             {!loadingEstadoExpedientes ? <EstadoExpedienteList
                               

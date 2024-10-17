@@ -49,10 +49,10 @@ const Login = () => {
 
     //if (response.status == 200) {
     if (response.status == 200) {
-      //setCodigo(response.data.codigo)
-      //setMyUser(response.data)
-      login(response.data)
-      navigate('/home');
+      setCodigo(response.data.codigo)
+      setMyUser(response.data)
+      //login(response.data)
+      //navigate('/home');
       toast.success("Ingrese su código OTP")
       setError('');
     } else {
@@ -115,7 +115,7 @@ const Login = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="············" aria-describedby="password" />
-                <span className="input-group-text cursor-pointer"><i className="bx bx-hide" /></span>
+                <span className="input-group-text cursor-pointer"><i className="" /></span>
               </div>
             </div>
 

@@ -254,7 +254,7 @@ const NuevoCombustible = () => {
     setLoading(true);
 
     try {
-      const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/combustibles?placa=${placa}`);
+      const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/combustible?placa=${placa}`);
       
 
       if (response.status === 200) {
@@ -400,7 +400,7 @@ const NuevoCombustible = () => {
     setLoading(true);
 
     try {
-      const response = await axiosInstance.delete(`${import.meta.env.VITE_API_URL}/combustibles/${combustib.id}`);
+      const response = await axiosInstance.delete(`${import.meta.env.VITE_API_URL}/combustible/${combustib.id}`);
       
       if (response.status === 200) {
         toast.success("Item eliminado con éxito!!")
@@ -638,7 +638,7 @@ const NuevoCombustible = () => {
                       <div className="row my-4 text-center">
                       {/* Deposit / Withdraw */}
                       {/* Data Tables */}
-                      {false && user.user.rol.nombre == "ADMINISTRADOR" && (
+                      {false && user.user.rol.nombre == "ASISTENTE-ADMINISTRATIVO" && (
                         <div className="col-12">
                             {!loadingVehiculos ? <VehiculoList
                               deleteVehiculo ={deleteVehiculo}
@@ -662,9 +662,9 @@ const NuevoCombustible = () => {
                       </div>
 
                       <div className="row my-4 text-center">
-                      {/* Deposit / Withdraw */}
+                      {/* Deposit / Withdraw  */}
                       {/* Data Tables */}
-                      {user.user.rol.nombre == "ADMINISTRADOR" && editing && (
+                      {user.user.rol.nombre == "ASISTENTE-ADMINISTRATIVO" && editing && (
                         <div className="col-12">
                             {!loadingCombustible ? <CombustibleList
                               deleteCombustible ={deleteCombustible}

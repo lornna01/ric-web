@@ -10,12 +10,16 @@ export default class RoleSeeder extends BaseSeeder {
         descripcion: 'Rol de administrador con todos los permisos',
       },
       {
-        nombre: 'ARCHIVOS',
+        nombre: 'TECNICO-ARCHIVO',
         descripcion: 'Rol para gestionar archivos',
       },
       {
-        nombre: 'ADMINISTRACION',
+        nombre: 'ASISTENTE-ADMINISTRATIVO',
         descripcion: 'Rol para tareas de administración',
+      },
+      {
+        nombre: 'GERENTE',
+        descripcion: 'Rol para el Director Municipal',
       }
     ])
   }

@@ -652,7 +652,7 @@ const EditarUsuario = () => {
                     >
                       <div className="avatar avatar-online">
                         <img
-                          src="/img/avatars/1.png"
+                          src="/img/ric.jpeg"
                           alt
                           className="w-px-40 h-auto rounded-circle"
                         />
@@ -668,7 +668,7 @@ const EditarUsuario = () => {
                             <div className="flex-shrink-0 me-2 pe-1">
                               <div className="avatar avatar-online">
                                 <img
-                                  src="/img/avatars/1.png"
+                                  src="/img/ric.jpeg"
                                   alt
                                   className="w-px-40 h-auto rounded-circle"
                                 />

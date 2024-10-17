@@ -101,13 +101,24 @@ const ExpedienteList = () => {
           {error}!
         </div>
       )}
-
+ 
       <div className="table-responsive">
         <table className="table">
           <thead className="table-light">
             <tr>
               <td colSpan={5}>
-              <div className="nav-item d-flex align-items-center">
+                {/* Texto adicional */}
+              <h2 className="text-center"> 
+              <span 
+                    className="mdi mdi-replay" 
+                    style={{ cursor: 'pointer' }} 
+                    onClick={() => window.location.reload()}
+                  >
+                    EXPEDIENTES CATASTRALES, DIRECCIÓN MUNICIPAL PETÉN
+                  </span>
+              </h2>
+              
+              <div className="nav-item d-flex align-items-center">            
                     <i className="mdi mdi-magnify mdi-24px lh-0" />
                     <input
                     type="text"
@@ -173,9 +184,9 @@ const ExpedienteList = () => {
                  
                   <td>
                     <span
-                      className={`badge bg-label-${item.usuario.rol.nombre === "ADMINISTRADOR" 
+                      className={`badge bg-label-${item.usuario.rol.nombre === "TECNICO-ARCHIVO" 
                         ? "warning" 
-                        : item.usuario.rol.nombre === "TECNICO-ARCHIVO" 
+                        : item.usuario.rol.nombre === "GERENTE" 
                           ? "info"
                           : "secondary"
                       } rounded-pill`}

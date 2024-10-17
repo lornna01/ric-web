@@ -47,7 +47,7 @@ router.group(() => {
     router.resource('municipios', MunicipiosController);
     router.resource('movimientos', MovimientoExpedientesController);
     router.resource('vehiculos', VehiculosController);
-    router.resource('combustibles', CombustiblesController);
+    router.resource('combustible', CombustiblesController);
     router.resource('boletas', BoletasController);
     router.resource('notificaciones', NotificacionesController);
 

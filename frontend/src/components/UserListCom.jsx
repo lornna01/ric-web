@@ -219,7 +219,7 @@ const UserListCom = ({ userList, getUsers,savePersona,persona,editing,setEditing
                         {item.foto ? 
                         <img className="mt-3" src={`data:image/png;base64,${item.foto}`} width='100%' />:
                         <img
-                          src="/img/avatars/1.png"
+                          src="/img/ric.jpeg"
                           alt={`${item.nombres}`} // O item.username, dependiendo de tus datos
                           className="rounded-circle"
                         />}

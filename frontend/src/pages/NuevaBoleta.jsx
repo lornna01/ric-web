@@ -389,7 +389,7 @@ const NuevaBoleta = () => {
     setLoading(true);
 
     try {
-      const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/combustibles?placa=${placa}`);
+      const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/combustible?placa=${placa}`);
       
 
       if (response.status === 200) {
