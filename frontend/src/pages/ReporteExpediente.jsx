@@ -347,24 +347,27 @@ const exportarExcel = async () => {
                             <div className="row">
                                 <div className="col-xxl">
                                     <div className="card mb-4">
-                                        <div className="card-header d-flex justify-content-between align-items-center">
+                                    <div className="card-header d-flex justify-content-between align-items-center">
                                             <h5 className="mb-0">
-                                                <span className="text-muted fw-light">Reportes/</span> Expedientes ingresados
+                                                <span className="text-muted fw-light">Reportes/</span>Expedientes Ingresados
                                             </h5>
+
+                                        </div>
+                                        <div className="card-header d-flex justify-content-start align-items-center">
                                             <button
                                                 type="button"
-                                                className="mdi mdi-magnify btn btn-warning waves-effect waves-light"
+                                                className="mdi mdi-magnify btn btn-warning waves-effect waves-light me-2" // Cambiado 'ms-2' a 'me-2'
                                                 onClick={handleBuscar}
                                             >
-                                                 Buscar
+                                                Buscar
                                             </button>
                                             <button
-                                                    type="button"
-                                                    className="mdi mdi-download-multiple btn btn-danger waves-effect waves-light ms-2"
-                                                    onClick={exportarExcel}
-                                                >
-                                                    Excel
-                                                </button>
+                                                type="button"
+                                                className="mdi mdi-download-multiple btn btn-danger waves-effect waves-light"
+                                                onClick={exportarExcel}
+                                            >
+                                                Excel
+                                            </button>
                                         </div>
                                         <div className="card-body">
                                             {mensaje && (
