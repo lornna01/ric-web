@@ -24,6 +24,7 @@ import MenuLateral from './components/MenuLateral';
 import ReporteExpediente from './pages/ReporteExpediente';
 import ReporteCombustible from './pages/ReporteCombustible';
 import NoFound from './pages/NoFound';
+import NuevoUnidad from './pages/NuevoUnidad';
 
 function App() {
   return (
@@ -33,22 +34,23 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/menu-lateral" element={<PrivateRoute><MenuLateral /></PrivateRoute>} />
           <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
-          
+
           <Route path="/editarUsuario" element={<PrivateRoute><EditarUsuario /></PrivateRoute>} />
           <Route path="/roles/nuevo" element={<PrivateRoute><NuevoRol /></PrivateRoute>} />
-                    
+
           <Route path="/departamentos/nuevo" element={<PrivateRoute><NuevoDepartamento /></PrivateRoute>} />
-          <Route path="/municipios/nuevo" element={<PrivateRoute><NuevoMunicipio /></PrivateRoute>} />         
+          <Route path="/municipios/nuevo" element={<PrivateRoute><NuevoMunicipio /></PrivateRoute>} />
           <Route path="/expedientes/nuevo" element={<PrivateRoute><NuevoExpediente /></PrivateRoute>} />
           <Route path="/expedientes/:buscarId" element={<PrivateRoute><BuscarExpediente /></PrivateRoute>} />
           <Route path="/estadoExpedientes/nuevo" element={<PrivateRoute><NuevoEstadoExpediente /></PrivateRoute>} />
           <Route path="/notificaciones" element={<PrivateRoute><Notificaciones /></PrivateRoute>} />
 
-          <Route path="/vehiculos/nuevo" element={<PrivateRoute><NuevoVehiculo /></PrivateRoute>} />          
+          <Route path="/vehiculos/nuevo" element={<PrivateRoute><NuevoVehiculo /></PrivateRoute>} />
           <Route path="/combustible/nuevo" element={<PrivateRoute><NuevoCombustible /></PrivateRoute>} />
           <Route path="/boleta/nueva" element={<PrivateRoute><NuevaBoleta /></PrivateRoute>} />
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-
+          <Route path="/estadoExpedientes/nuevo" element={<PrivateRoute><NuevoEstadoExpediente /></PrivateRoute>} />
+          <Route path="/unidades/nuevo" element={<PrivateRoute><NuevoUnidad /></PrivateRoute>} />
 
 
 
@@ -57,7 +59,7 @@ function App() {
 
 
           <Route path="/noFound" element={<PrivateRoute><NoFound /></PrivateRoute>} />
-          
+
           <Route path="/" element={<Login />} />
           <Route path="*" element={<Home />} />
         </Routes>

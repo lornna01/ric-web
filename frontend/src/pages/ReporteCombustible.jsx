@@ -125,7 +125,28 @@ const ReporteCombustible = () => {
 
     */
 
-/*
+    /*
+        const convertirFecha = (timestamp) => {
+            if (!timestamp) {
+                return "Fecha no disponible";
+            }
+    
+            const fecha = new Date(timestamp);
+            if (isNaN(fecha.getTime())) {
+                return "Fecha no válida";
+            }
+    
+            // Ajustar el día si es necesario
+            fecha.setUTCDate(fecha.getUTCDate() + 1);
+    
+            return fecha.toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+            });
+        };
+    */
+
     const convertirFecha = (timestamp) => {
         if (!timestamp) {
             return "Fecha no disponible";
@@ -145,27 +166,6 @@ const ReporteCombustible = () => {
             day: '2-digit',
         });
     };
-*/
-
-const convertirFecha = (timestamp) => {
-    if (!timestamp) {
-        return "Fecha no disponible";
-    }
-
-    const fecha = new Date(timestamp);
-    if (isNaN(fecha.getTime())) {
-        return "Fecha no válida";
-    }
-
-    // Ajustar el día si es necesario
-    fecha.setUTCDate(fecha.getUTCDate() + 1);
-
-    return fecha.toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-    });
-};
 
     // Funciones para obtener departamentos y municipios
     const getCombustible = async () => {
@@ -223,6 +223,7 @@ const convertirFecha = (timestamp) => {
             "Nombre": combustible.usuario_nombre,
             "Rol": combustible.rol_nombre,
             "Fecha de Asignacion": convertirFecha(combustible.fechainicio),
+            "Unidad de Pertenencia": combustible.unidad,
             "Chofer": combustible.chofer,
             "Placa": combustible.placa,
             "Kilometraje Inicial": combustible.kilometraje_inicial,
@@ -231,13 +232,12 @@ const convertirFecha = (timestamp) => {
             "Cupón Desde": combustible.cupon_desde,
             "Cupón Hasta": combustible.cupon_hasta,
             "Total de Cupones": combustible.total_cupones,
-            "Denominación (Q.)": combustible.denominación,
+            "Denominación (Q.)": combustible.denominacion,
             "Monto Final": combustible.monto,
-            "PDF": combustible.pdf,
             "Observaciones": combustible.observacion_cupon,
             "Saldo Inicio": combustible.saldo_inicio,
             "Saldo Final": combustible.saldo_fin,
-            "Galones Asignados": combustible.galones_asignados,
+            "Galones Asignados": combustible.galones,
             "Consumo": combustible.consumo,
             "Rendimiento": combustible.rendimiento,
         }));
@@ -274,6 +274,7 @@ const convertirFecha = (timestamp) => {
                 { width: 20 }, // NOMBRE
                 { width: 20 }, // ROL
                 { width: 20 }, // FECHA
+                { width: 20 }, // UNIDAD
                 { width: 20 }, // CHOFER
                 { width: 20 }, // PLACA
                 { width: 20 }, // KILOMETRAJE INICIAL
@@ -283,8 +284,7 @@ const convertirFecha = (timestamp) => {
                 { width: 20 }, // CUPON HASTA
                 { width: 20 }, // TOTAL DE CUPONES
                 { width: 20 }, // denominación (Q.)
-                { width: 20 }, // MONTO FINAL
-                { width: 20 }, // PDF
+                { width: 20 }, // MONTO FINAL                
                 { width: 20 }, // OBSERVACIONES
                 { width: 20 }, // SALDO INICIO
                 { width: 20 }, // SALDO FINAL
@@ -299,6 +299,7 @@ const convertirFecha = (timestamp) => {
                 'Nombre',
                 'Rol',
                 'Fecha de Asignacion',
+                'Unidad de Pertenencia',
                 'Chofer',
                 'Placa',
                 'Kilometraje Inicial',
@@ -308,8 +309,7 @@ const convertirFecha = (timestamp) => {
                 'Cupón Hasta',
                 'Total de Cupones',
                 'Denominación (Q.)',
-                'Monto Final',
-                'PDF',
+                'Monto Final',                
                 'Observaciones',
                 'Saldo Inicio',
                 'Saldo Final',
@@ -357,6 +357,7 @@ const convertirFecha = (timestamp) => {
                     { name: 'Nombre' },
                     { name: 'Rol' },
                     { name: 'Fecha de Asignacion' },
+                    { name: 'Unidad de Pertenencia' },
                     { name: 'Chofer' },
                     { name: 'Placa' },
                     { name: 'Kilometraje Inicial' },
@@ -366,8 +367,7 @@ const convertirFecha = (timestamp) => {
                     { name: 'Cupón Hasta' },
                     { name: 'Total de Cupones' },
                     { name: 'Denominación (Q.)' },
-                    { name: 'Monto Final' },
-                    { name: 'PDF' },
+                    { name: 'Monto Final' },                    
                     { name: 'Observaciones' },
                     { name: 'Saldo Inicio' },
                     { name: 'Saldo Final' },
@@ -504,7 +504,7 @@ const convertirFecha = (timestamp) => {
                                                     <div class="form-floating form-floating-outline mb-4" >
                                                         <input
                                                             type="text"
-                                                            maxLength={7}
+                                                            maxLength={8}
                                                             className="form-control"
                                                             id="placa"
                                                             placeholder="Matrícula"
@@ -520,7 +520,7 @@ const convertirFecha = (timestamp) => {
 
                                             </form>
                                             <div className="row my-4 text-center">
-                                                {["GERENTE", "ASISTENTE-ADMINISTRATIVO"].includes(user.user.rol.nombre) && (
+                                                {["TECNICO-BODEGA", "ADMINISTRADOR", "GERENTE", "ASISTENTE-ADMINISTRATIVO"].includes(user.user.rol.nombre) && (
                                                     <div className="col-12">
                                                         {loadingReportes ? (
                                                             <div className="spinner-grow text-success" role="status"></div>
@@ -532,6 +532,7 @@ const convertirFecha = (timestamp) => {
                                                                             <th scope="col">Nombre</th>
                                                                             <th scope="col">Rol</th>
                                                                             <th scope="col">Fecha de Asignacion</th>
+                                                                            <th scope="col">Unidad de Pertenencia</th>
                                                                             <th scope="col">Chofer</th>
                                                                             <th scope="col">Placa</th>
                                                                             <th scope="col">Kilometraje Inicial</th>
@@ -541,8 +542,7 @@ const convertirFecha = (timestamp) => {
                                                                             <th scope="col">Cupón Hasta</th>
                                                                             <th scope="col">Total de Cupones</th>
                                                                             <th scope="col">Denominación (Q.)</th>
-                                                                            <th scope="col">Monto Final</th>
-                                                                            <th scope="col">PDF</th>
+                                                                            <th scope="col">Monto Final</th>                                                                            
                                                                             <th scope="col">Observaciones</th>
                                                                             <th scope="col">Saldo Inicio</th>
                                                                             <th scope="col">Saldo Final</th>
@@ -566,6 +566,7 @@ const convertirFecha = (timestamp) => {
                                                                                     <td>{combustible.usuario_nombre}</td>
                                                                                     <td>{combustible.rol_nombre}</td>
                                                                                     <td>{convertirFecha(combustible.fechainicio)}</td>  {/* Fecha de Asignación */}
+                                                                                    <td>{combustible.unidad}</td>                       {/* Unidad */}
                                                                                     <td>{combustible.chofer}</td>                       {/* Chofer */}
                                                                                     <td>{combustible.placa}</td>                       {/* Placa */}
                                                                                     <td>{combustible.kilometraje_inicial}</td>     {/* Kilometraje Inicial */}
@@ -574,23 +575,12 @@ const convertirFecha = (timestamp) => {
                                                                                     <td>{combustible.cupon_desde}</td>                 {/* Cupón Desde */}
                                                                                     <td>{combustible.cupon_hasta}</td>                 {/* Cupón Hasta */}
                                                                                     <td>{combustible.total_cupones}</td>               {/* Total de Cupones */}
-                                                                                    <td>{combustible.denominación}</td>                {/* Denominación (Q.) */}
-                                                                                    <td>{combustible.monto}</td>                       {/* Monto Final */}
-                                                                                    <td>
-                                                                                        {combustible.pdf && <button
-                                                                                            onClick={() => {
-                                                                                                verPDF(combustible)
-                                                                                            }}
-                                                                                            className="btn rounded-pill btn-success m-1"
-                                                                                        >
-                                                                                            <i className="bx bx-download"></i>
-                                                                                        </button>}
-
-                                                                                    </td>                                                                                    
+                                                                                    <td>{combustible.denominacion}</td>                {/* Denominación (Q.) */}
+                                                                                    <td>{combustible.monto}</td>                       {/* Monto Final */}                                                                                    
                                                                                     <td>{combustible.observacion_cupon}</td>          {/* Observaciones */}
                                                                                     <td>{combustible.saldo_inicio}</td>                {/* Saldo Inicio */}
                                                                                     <td>{combustible.saldo_fin}</td>                   {/* Saldo Final */}
-                                                                                    <td>{combustible.galones_asignados}</td>          {/* Galones Asignados */}
+                                                                                    <td>{combustible.galones}</td>          {/* Galones Asignados */}
                                                                                     <td>{combustible.consumo}</td>                     {/* Consumo */}
                                                                                     <td>{combustible.rendimiento}</td>                 {/* Rendimiento */}
                                                                                 </tr>

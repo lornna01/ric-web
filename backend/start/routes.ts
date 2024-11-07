@@ -23,6 +23,7 @@ import CombustiblesController from '#controllers/combustibles_controller';
 import BoletasController from '#controllers/boletas_controller';
 import NotificacionesController from '#controllers/notificaciones_controller';
 import PersonController from '#controllers/persona_controller';
+import UnidadController from '#controllers/unidad_controller';
 
 //import Route from '@ioc:Adonis/Core/Route';
 
@@ -50,6 +51,7 @@ router.group(() => {
     router.resource('combustible', CombustiblesController);
     router.resource('boletas', BoletasController);
     router.resource('notificaciones', NotificacionesController);
+    router.resource('unidades', UnidadController);
 
     /*    
     Route.get('/roles', 'RolController.index')

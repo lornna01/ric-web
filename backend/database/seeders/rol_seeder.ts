@@ -20,6 +20,14 @@ export default class RoleSeeder extends BaseSeeder {
       {
         nombre: 'GERENTE',
         descripcion: 'Rol para el Director Municipal',
+      },
+      {
+        nombre: 'TECNICO-BODEGA',
+        descripcion: 'Rol para tareas de Bodega',
+      },
+      {
+        nombre: 'TECNICO-INFORMATICA',
+        descripcion: 'Rol para tareas de administración',
       }
     ])
   }

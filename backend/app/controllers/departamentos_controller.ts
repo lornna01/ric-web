@@ -51,6 +51,15 @@ export default class DepartamentosController {
   }
   
   
+  async destroy({ params,response }: HttpContext) {
+    const departamento = await Departamento.findOrFail(params.id);
+    if (departamento) {
+      departamento.delete();
+      return response.json({message:"Departamento eliminado!"});
+    } else {
+      return response.badRequest({ message: "No existe."});
+    }
+  }
 
   
 

@@ -31,16 +31,16 @@ const Dashboard = () => {
                       </h5>
                     </div>
                     <div className="card-body d-flex justify-content-between align-items-center">
-                      
-                      <div className="d-flex align-items-center" style={{ width: "100%", height: "100vh" }}>
-                        
 
-                        <iframe 
-                          title="reportes" 
-                          width="100%" 
-                          height="100%" 
+                      <div className="d-flex align-items-center" style={{ width: "100%", height: "100vh" }}>
+
+
+                        <iframe
+                          title="reportes"
+                          width="100%"
+                          height="100%"
                           src="https://app.powerbi.com/view?r=eyJrIjoiZjg3YTI4ZTUtNDY5Yi00NTYyLWIxZTQtYTdjMzFjZTRlMTZjIiwidCI6IjVmNTNiNGNlLTYzZDQtNGVlOC04OGQyLTIyZjBiMmQ0YjI3YSIsImMiOjR9" frameborder="0" allowFullScreen="true">
-                          
+
                         </iframe>
                       </div>
 
@@ -51,7 +51,7 @@ const Dashboard = () => {
             </div>
             {/* / Content */}
             {/* Footer */}
-            
+
             {/* / Footer */}
             <div className="content-backdrop fade" />
           </div>
@@ -61,7 +61,7 @@ const Dashboard = () => {
       </div>
       {/* Overlay */}
       <div className="layout-overlay layout-menu-toggle" />
-      
+
     </div>
   );
 }

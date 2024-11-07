@@ -31,7 +31,7 @@ const NuevoMunicipio = () => {
   const [loadingMunicipios, setLoadingMunicipios] = useState(false);
 
   const [editing, setEditing] = useState(false);
-  
+
   const [municipioList, setMunicipioList] = useState([]);
   const [municipio, setMunicipio] = useState();
   const [departamentoList, setDepartamentoList] = useState([]);
@@ -40,18 +40,18 @@ const NuevoMunicipio = () => {
   const [departamento, setDepartamento] = useState();
   const [estado, setEstado] = useState();
 
- 
+
   const save = async () => {
     setMensaje("");
     setError("");
     if (!nombre) {
       setError("Ingrese el nombre");
       return;
-    }else if (idDepartamento<=0) {
+    } else if (idDepartamento <= 0) {
       setError("Seleccione el departamento");
       setMensaje("");
       return;
-    }else if (!estado) {
+    } else if (!estado) {
       setError("Ingrese el estado");
       return;
     }
@@ -105,11 +105,11 @@ const NuevoMunicipio = () => {
     if (!nombre) {
       setError("Ingrese el nombre");
       return;
-    }else if (idDepartamento<=0) {
+    } else if (idDepartamento <= 0) {
       setError("Seleccione el departamento");
       setMensaje("");
       return;
-    }else if (!estado) {
+    } else if (!estado) {
       setError("Ingrese el estado");
       return;
     }
@@ -132,7 +132,7 @@ const NuevoMunicipio = () => {
         setEditing(false);
         setTimeout(() => {
           window.location.reload();
-        }, 1500);  
+        }, 1500);
       }
     } catch (error) {
       if (error.response) {
@@ -150,7 +150,7 @@ const NuevoMunicipio = () => {
     } finally {
       setLoading(false);
     }
-  
+
     if (!error) {
       const closeButtonElement = document.getElementById("cerrarModal");
       if (closeButtonElement) {
@@ -174,7 +174,7 @@ const NuevoMunicipio = () => {
 
     try {
       const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/municipiosByNombre/${nombre}`);
-      
+
 
       if (response.status === 200) {
         await getMunicipios()
@@ -189,7 +189,7 @@ const NuevoMunicipio = () => {
       }
       setLoading(false);
       setError();
-      
+
     } catch (error) {
       setEditing(false);
       if (error.response.status === 400) {
@@ -198,7 +198,7 @@ const NuevoMunicipio = () => {
         setNombre('')
         setIdDepartamento('')
         setEstado('')
-       
+
       }
       if (error.status >= 400 && error.response.status < 500) {
         setError("Error inesperado");
@@ -249,13 +249,13 @@ const NuevoMunicipio = () => {
 
     try {
       const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/municipios?departamento_id=${idDepartamento}`);
-      
+
 
       if (response.status === 200) {
         //setMensaje("Vehículo creado con éxito!!");
         console.log(response.data)
         setMunicipioList(response.data)
-       setLoadingMunicipios(false)
+        setLoadingMunicipios(false)
       }
       setLoading(false);
       setError();
@@ -267,7 +267,7 @@ const NuevoMunicipio = () => {
         setNombre('')
         setIdDepartamento('')
         setEstado('')
-        
+
       }
       if (error.status >= 400 && error.response.status < 500) {
         setError("Error inesperado");
@@ -287,19 +287,19 @@ const NuevoMunicipio = () => {
       }
     }
   };
-  
+
   useEffect(() => {
     getDepartamentos();
   }, []);
 
-  useEffect(() =>{
+  useEffect(() => {
     getMunicipios()
     if (editing) {
       setNombre(municipio?.nombre)
       setIdDepartamento(municipio?.departamento?.id)
       setEstado(municipio?.estado)
     }
- },[editing])
+  }, [editing])
 
   return (
     <div className="layout-wrapper layout-content-navbar">
@@ -312,15 +312,15 @@ const NuevoMunicipio = () => {
           {/* Content wrapper */}
           <div className="content-wrapper">
             {/* Content */}
-           
+
             <div className="container-xxl flex-grow-1 container-p-y">
               <div className="row">
                 <div className="col-xxl">
                   <div className="card mb-4">
                     <div className="card-header d-flex justify-content-between align-items-center">
-                    <h5 className="mb-0">
+                      <h5 className="mb-0">
                         <span class="text-muted fw-light">Municipios/</span>{" "}
-                        Nuevo Municipio  
+                        Nuevo Municipio
                       </h5>
                     </div>
                     <div className="card-body">
@@ -336,77 +336,77 @@ const NuevoMunicipio = () => {
                       )}
                       <form>
 
-                      <div class="input-group">
-                      <div className="form-floating form-floating-outline mb-4">
-                          <input
-                            type="text"
-                            maxLength={60}
-                            className="form-control"
-                            id="nombre"
-                            placeholder="Nombre del Municipio"
-                            value={nombre}
-                            onChange={(e) => setNombre(e.target.value)}
-                          />
-                          <label htmlFor="nombre">
-                            Nombre del Municipio
-                          </label>
+                        <div class="input-group">
+                          <div className="form-floating form-floating-outline mb-4">
+                            <input
+                              type="text"
+                              maxLength={60}
+                              className="form-control"
+                              id="nombre"
+                              placeholder="Nombre del Municipio"
+                              value={nombre}
+                              onChange={(e) => setNombre(e.target.value)}
+                            />
+                            <label htmlFor="nombre">
+                              Nombre del Municipio
+                            </label>
+                          </div>
+
+                          <div className="form-floating form-floating-outline mb-4">
+                            <select
+                              className="form-control"
+                              id="departamento"
+                              value={idDepartamento}
+                              onChange={(e) => setIdDepartamento(e.target.value)}
+                            >
+                              <option value="">Seleccione un Departamento</option>
+                              {departamentoList.map((dep) => (
+                                <option key={dep.id} value={dep.id}>
+                                  {dep.nombre}
+                                </option>
+                              ))}
+                            </select>
+                            <label htmlFor="departamento">
+                              Departamento
+                            </label>
+                          </div>
                         </div>
 
-                        <div className="form-floating form-floating-outline mb-4">
-                          <select
-                            className="form-control"
-                            id="departamento"
-                            value={idDepartamento}
-                            onChange={(e) => setIdDepartamento(e.target.value)}
-                          >
-                            <option value="">Seleccione un Departamento</option>
-                            {departamentoList.map((dep) => (
-                              <option key={dep.id} value={dep.id}>
-                                {dep.nombre}
-                              </option>
-                            ))}
-                          </select>
-                          <label htmlFor="departamento">
-                            Departamento
-                          </label>
-                        </div>
-                      </div>
 
-
-                      <div class="input-group">
-                        <div class="form-floating form-floating-outline mb-4">
-                          <select
-                            className="form-select"
+                        <div class="input-group">
+                          <div class="form-floating form-floating-outline mb-4">
+                            <select
+                              className="form-select"
                               onChange={(e) => setEstado(e.target.value)} value={estado}>
-                            <option value="">-- Seleccionar --</option>
-                            <option value="ACTIVO">ACTIVO</option>
-                            <option value="INACTIVO">INACTIVO</option>
-                            
-                          </select>
-                          <label for="exampleFormControlSelect1">
-                            ESTADO DEL ROL
-                          </label>
-                      </div>
+                              <option value="">-- Seleccionar --</option>
+                              <option value="ACTIVO">ACTIVO</option>
+                              <option value="INACTIVO">INACTIVO</option>
 
-                      </div>
+                            </select>
+                            <label for="exampleFormControlSelect1">
+                              ESTADO DEL ROL
+                            </label>
+                          </div>
 
-                        
+                        </div>
+
+
 
 
 
 
                         {editing ? (<span>
                           <button
-                          type="button"
-                          className="btn btn-warning waves-effect waves-light"
-                          onClick={update}
-                          disabled={loading}
-                        >
-                          <i class="menu-icon tf-icons mdi mdi-sync"></i>
-                          Guardar cambios
-                          </button> 
-                          
-                        </span> ):<button
+                            type="button"
+                            className="btn btn-warning waves-effect waves-light"
+                            onClick={update}
+                            disabled={loading}
+                          >
+                            <i class="menu-icon tf-icons mdi mdi-sync"></i>
+                            Guardar cambios
+                          </button>
+
+                        </span>) : <button
                           type="button"
                           className="btn btn-primary waves-effect waves-light"
                           onClick={save}
@@ -424,50 +424,50 @@ const NuevoMunicipio = () => {
                             {mensaje}!
                           </div>
                         )}
- 
+
 
                         {error && (
                           <div className="alert alert-danger mt-4" role="alert">
                             {error}!
                           </div>
-                        )}                        
+                        )}
                       </form>
 
                       <div className="row my-4 text-center">
-                      {/* Deposit / Withdraw */}
-                      {/* Data Tables */}
-                      {user.user.rol.nombre == "TECNICO-ARCHIVO" && (
-                        <div className="col-12">
+                        {/* Deposit / Withdraw */}
+                        {/* Data Tables */}
+                        {user?.user?.rol?.nombre && ["ADMINISTRADOR", "TECNICO-ARCHIVO"].includes(user.user.rol.nombre) && (
+                          <div className="col-12">
                             {!loadingMunicipios ? <MunicipioList
-                              
-                            municipioList={municipioList}
-                            getMunicipios={getMunicipios}
+
+                              municipioList={municipioList}
+                              getMunicipios={getMunicipios}
                               error={error}
                               municipio={municipio}
                               setMunicipio={setMunicipio}
                               setEditing={setEditing}
                               user={user}
                               setMensaje={setMensaje}
-                            setError={setError}
-                            loading={loading}
-                            setLoading={setLoading}
-                          />:(<div className="spinner-grow text-success" role="status">
-                        </div>)}
-                        </div>
-                      )}
+                              setError={setError}
+                              loading={loading}
+                              setLoading={setLoading}
+                            /> : (<div className="spinner-grow text-success" role="status">
+                            </div>)}
+                          </div>
+                        )}
 
-                      {/*/ Data Tables */}
+                        {/*/ Data Tables */}
                       </div>
 
 
                       <div className="row my-4 text-center">
-                      {/* Deposit / Withdraw */}
-                      {/* Data Tables */}
-                      
+                        {/* Deposit / Withdraw */}
+                        {/* Data Tables */}
 
-                      {/*/ Data Tables */}
+
+                        {/*/ Data Tables */}
                       </div>
-                      
+
 
                     </div>
                   </div>

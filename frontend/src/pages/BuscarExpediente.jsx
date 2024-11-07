@@ -177,8 +177,8 @@ const BuscarExpediente = () => {
   const saveChanges = async () => {
     setMensaje("");
     setError("");
-    if (!titular) {
-      setError("Ingrese el titular");
+    if (!titular || titular.trim() === "") {
+      setError("Ingrese un nombre válido");
       return;
     } else if (idDepartamento <= 0) {
       setError("Seleccione el departamento");
@@ -554,129 +554,178 @@ const BuscarExpediente = () => {
                         </div>
                       )}
                       {expediente && <form>
-                        <div class="form-floating form-floating-outline mb-4">
+
+
+                        {/* APARTADO PARA TITULAR */}
+                        <div className="form-floating form-floating-outline mb-4">
                           <input
-                            disabled={!editar}
                             type="text"
-                            maxLength={60}
                             className="form-control"
                             id="titular"
                             placeholder="Juan Pablo Ramirez"
                             value={titular}
-                            onChange={(e) => setTitular(e.target.value)}
+                            onChange={(e) => {
+
+                              let input = e.target.value;
+
+                              // Expresión regular para permitir letras con tildes y espacios, no más de un espacio seguido
+                              const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/;
+
+                              if (regex.test(input) && (input.length === 0 || input[0] !== ' ') && !/\s{2,}/.test(input)) {
+
+                                // Capitalizar las primeras letras de cada palabra
+                                input = input
+                                  .toLowerCase()
+                                  .split(' ')
+                                  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                  .join(' ');
+
+                                setTitular(input);
+                              }
+                            }}
                           />
-                          <label for="exampleFormControlSelect1">
-                            Titular
-                          </label>
+                          <label htmlFor="titular">Titular</label>
                         </div>
+
+
+
                         <div class="input-group">
-                          <div className="form-floating form-floating-outline mb-4">
-                            <select
-                              disabled={!editar}
-                              id="departamento"
-                              maxLength={2}
-                              class="form-select form-select-lg"
-                              value={idDepartamento}
-                              onChange={(e) => setIdDepartamento(e.target.value)}
-                            >
-                              <option value={0}>
-                                --- SELECCIONE ---
-                              </option>
-                              {departamentos.map((item) => {
-                                return (
-                                  <option key={item.id} value={item.id}>
-                                    {item.nombre}
-                                  </option>
-                                );
-                              })}
-                            </select>
-                            <label htmlFor="departamento">Departamento</label>
-                            <div
-                              data-lastpass-icon-root=""
-                              style={{
-                                position: "relative !important",
-                                height: "0px !important",
-                                width: "0px !important",
-                                float: "left !important",
-                              }}
-                            />
-                          </div>
-                          <div className="form-floating form-floating-outline mb-4">
-                            <select
-                              disabled={!editar}
-                              id="municipio"
-                              maxLength={2}
-                              class="form-select form-select-lg"
-                              value={idMunicipio}
-                              onChange={(e) => setIdMunicipio(e.target.value)}
-                            >
-                              <option value={0}>
-                                --- SELECCIONE ---
-                              </option>
-                              {idDepartamento > 0 && municipios.map((item) => {
-                                return (
-                                  <option key={item.id} value={item.id}>
-                                    {item.nombre}
-                                  </option>
-                                );
-                              })}
-                            </select>
-                            <label htmlFor="municipio">Municipio</label>
-                            <div
-                              data-lastpass-icon-root=""
-                              style={{
-                                position: "relative !important",
-                                height: "0px !important",
-                                width: "0px !important",
-                                float: "left !important",
-                              }}
-                            />
+
+                          {/* APARTADO PARA DEPARTAMENTO */}
+                          <div className="col-lg-3 col-md-6 col-12">
+                            <div className="form-floating form-floating-outline mb-4">
+                              <select
+                                disabled={!editar}
+                                id="departamento"
+                                maxLength={2}
+                                class="form-select form-select-lg"
+                                value={idDepartamento}
+                                onChange={(e) => setIdDepartamento(e.target.value)}
+                              >
+                                <option value={0}>
+                                  --- SELECCIONE ---
+                                </option>
+                                {departamentos.map((item) => {
+                                  return (
+                                    <option key={item.id} value={item.id}>
+                                      {item.nombre}
+                                    </option>
+                                  );
+                                })}
+                              </select>
+                              <label htmlFor="departamento">Departamento</label>
+                              <div
+                                data-lastpass-icon-root=""
+                                style={{
+                                  position: "relative !important",
+                                  height: "0px !important",
+                                  width: "0px !important",
+                                  float: "left !important",
+                                }}
+                              />
+                            </div>
+
                           </div>
 
-                          <div className="form-floating form-floating-outline mb-4">
-                            <input
-                              disabled={!editar}
-                              type="text"
-                              maxLength={2}
-                              className="form-control"
-                              id="poligono"
-                              placeholder="01"
-                              value={poligono}
-                              onChange={(e) => setPoligono(e.target.value)}
-                            />
-                            <label htmlFor="poligono">Polígono</label>
-                            <div
-                              data-lastpass-icon-root=""
-                              style={{
-                                position: "relative !important",
-                                height: "0px !important",
-                                width: "0px !important",
-                                float: "left !important",
-                              }}
-                            />
+
+                          {/* APARTADO PARA MUNICIPIO */}
+                          <div className="col-lg-3 col-md-6 col-12">
+                            <div className="form-floating form-floating-outline mb-4">
+                              <select
+                                disabled={!editar}
+                                id="municipio"
+                                maxLength={2}
+                                class="form-select form-select-lg"
+                                value={idMunicipio}
+                                onChange={(e) => setIdMunicipio(e.target.value)}
+                              >
+                                <option value={0}>
+                                  --- SELECCIONE ---
+                                </option>
+                                {idDepartamento > 0 && municipios.map((item) => {
+                                  return (
+                                    <option key={item.id} value={item.id}>
+                                      {item.nombre}
+                                    </option>
+                                  );
+                                })}
+                              </select>
+                              <label htmlFor="municipio">Municipio</label>
+                              <div
+                                data-lastpass-icon-root=""
+                                style={{
+                                  position: "relative !important",
+                                  height: "0px !important",
+                                  width: "0px !important",
+                                  float: "left !important",
+                                }}
+                              />
+                            </div>
+
                           </div>
-                          <div className="form-floating form-floating-outline mb-4">
-                            <input
-                              disabled={!editar}
-                              type="text"
-                              maxLength={5}
-                              className="form-control"
-                              id="predio"
-                              placeholder="00001"
-                              value={predio}
-                              onChange={(e) => setPredio(e.target.value)}
-                            />
-                            <label htmlFor="predio">Predio</label>
-                            <div
-                              data-lastpass-icon-root=""
-                              style={{
-                                position: "relative !important",
-                                height: "0px !important",
-                                width: "0px !important",
-                                float: "left !important",
-                              }}
-                            />
+
+
+                          <div className="col-lg-3 col-md-6 col-12">
+                            <div className="form-floating form-floating-outline mb-4">
+                              <input
+                                disabled={!editar}
+                                type="text"
+                                maxLength={2}
+                                className="form-control"
+                                id="poligono"
+                                placeholder="01"
+                                value={poligono}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+
+                                  // Expresión regular para validar que sea un número entre 01 y 99
+                                  const regex = /^(0[1-9]|[1-9][0-9]|[0-9]{1,2})?$/; // Permite 0-99 y vacío
+
+                                  // Permite que el campo esté vacío o que cumpla con la expresión regular
+                                  if (value === "" || regex.test(value)) {
+                                    setPoligono(value); // Actualiza el estado si es válido o si se borra
+                                  }
+                                }}
+                              />
+                              <label htmlFor="poligono">Polígono</label>
+                              <div
+                                data-lastpass-icon-root=""
+                                style={{
+                                  position: "relative !important",
+                                  height: "0px !important",
+                                  width: "0px !important",
+                                  float: "left !important",
+                                }}
+                              />
+                            </div>
                           </div>
+
+                          <div className="col-lg-3 col-md-6 col-12">
+                            <div className="form-floating form-floating-outline mb-4">
+                              <input
+                                disabled={!editar}
+                                type="text"
+                                maxLength={5}
+                                className="form-control"
+                                id="predio"
+                                placeholder="00001"
+                                value={predio}
+                                onChange={(e) => setPredio(e.target.value)}
+                              />
+                              <label htmlFor="predio">Predio</label>
+                              <div
+                                data-lastpass-icon-root=""
+                                style={{
+                                  position: "relative !important",
+                                  height: "0px !important",
+                                  width: "0px !important",
+                                  float: "left !important",
+                                }}
+                              />
+                            </div>
+                          </div>
+
+
 
                         </div>
 
@@ -869,7 +918,7 @@ const BuscarExpediente = () => {
                         </button>
 
 
-                        {user.user.rol.nombre == "ADMINISTRADOR" && <button
+                        {user.user.rol.nombre == "TECNICO-ARCHIVO" && <button
                           type="button"
                           className="btn btn-danger waves-effect waves-light text-end" onClick={(e) => {
                             if (!eliminar) {
@@ -883,6 +932,7 @@ const BuscarExpediente = () => {
                           <i class="menu-icon tf-icons mdi mdi-minus-circle"></i>
                           {eliminar ? 'CONFIRMAR ELIMINACIÓN' : 'Eliminar'}
                         </button>}
+
 
                         {mensaje && (
                           <div className="alert alert-success mt-4" role="alert">

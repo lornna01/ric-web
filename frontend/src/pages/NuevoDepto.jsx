@@ -7,9 +7,7 @@ import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import toast from "react-hot-toast";
 
-
-
-import DepartamentoList from "../components/DepartamentoList"
+import DepartamentoList from "../components/DepartamentoList";
 
 const NuevoDepartamento = () => {
   const { login } = useAuth();
@@ -33,10 +31,11 @@ const NuevoDepartamento = () => {
   const [editing, setEditing] = useState(false);
 
   const [departamentoList, setDepartamentoList] = useState([]);
-  const [nombre, setNombre] = useState("");
-
   const [departamento, setDepartamento] = useState();
+
+  const [nombre, setNombre] = useState();
   const [estado, setEstado] = useState();
+
 
 
   const save = async () => {
@@ -46,9 +45,11 @@ const NuevoDepartamento = () => {
       setError("Ingrese el nombre");
       return;
     } else if (!estado) {
-      setError("Ingrese el estado");
+      setError("Seleccione el estado");
+      setMensaje("");
       return;
     }
+
     setLoading(true);
 
     try {
@@ -62,7 +63,7 @@ const NuevoDepartamento = () => {
       );
 
       if (response.status === 201) {
-        toast.success("DEPTO. creado con éxito!!");
+        toast.success("Departamento creado con éxito!!")
         //setMensaje("Vehículo creado con éxito!!");
         window.location.reload()
         //navigate('/vehiculos/nuevo');
@@ -70,10 +71,10 @@ const NuevoDepartamento = () => {
       setLoading(false);
       setError();
     } catch (error) {
-      if (error.response.status === 400) {
+      if (error.response?.status === 400) {
         setError(error.response.data.message);
       }
-      if (error.status >= 400 && error.response.status < 500) {
+      if (error.status >= 400 && error.response?.status < 500) {
         setError("Error inesperado");
       }
       if (error.status >= 500) {
@@ -99,7 +100,7 @@ const NuevoDepartamento = () => {
       setError("Ingrese el nombre");
       return;
     } else if (!estado) {
-      setError("Ingrese el estado");
+      setError("Seleccione el estado");
       return;
     }
 
@@ -107,20 +108,19 @@ const NuevoDepartamento = () => {
 
     try {
       const response = await axiosInstance.put(
-        `${import.meta.env.VITE_API_URL}/departamentos/${departamento.id}`,
+        `${import.meta.env.VITE_API_URL}/departamentos/${departamento.id}`, // Usa el ID del rol para la URL
         {
           usuario_id: user?.user?.id,
           nombre,
           estado
         }
       );
-
       if (response.status === 200) {
         toast.success("Actualizado con éxito!!");
         setEditing(false);
-        setTimeout(() => {
+        
           window.location.reload();
-        }, 1500);
+       
       }
     } catch (error) {
       if (error.response) {
@@ -147,27 +147,31 @@ const NuevoDepartamento = () => {
     }
   };
 
-
-
-
-
-  const getDepartamentos = async () => {
+  const findByNombreDep = async () => {
     setMensaje("");
     setError("");
-    setLoadingDepartamentos(true);
+    if (!nombre) {
+      setError("Ingrese el nombre");
+      return;
+    }
+
+    setLoading(true);
 
     try {
-      const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/departamentos`);
+      const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/departamentosByNombre/${nombre}`);
 
 
       if (response.status === 200) {
+        await getDepartamentos();
+        toast.success("Encontrado con éxito!!")
         //setMensaje("Vehículo creado con éxito!!");
         console.log(response.data)
-        setDepartamentoList(response.data)
-        setLoadingDepartamentos(false)
+        setDepartamento(response.data)
+        setEditing(true);
       }
       setLoading(false);
       setError();
+
     } catch (error) {
       setEditing(false);
       if (error.response.status === 400) {
@@ -197,12 +201,65 @@ const NuevoDepartamento = () => {
   };
 
 
+
+  const getDepartamentos = async () => {
+    setMensaje("");
+    setError("");
+    setLoadingDepartamentos(true);
+
+    try {
+      const response = await axiosInstance.get(
+        `${import.meta.env.VITE_API_URL}/departamentos`);
+
+
+      if (response.status === 200) {
+        //setMensaje("Vehículo creado con éxito!!");
+        console.log(response.data)
+        setDepartamentoList(response.data)
+        setLoadingDepartamentos(false)
+      }
+      setLoading(false);
+      setError();
+    } catch (error) {
+      setEditing(false);
+      if (error.response.status === 400) {
+        setError(error.response.data.message);
+        toast.error(error.response.data.message)
+        setNombre('')
+        setEstado('')
+
+      }
+      if (error.status >= 400 && error.response?.status < 500) {
+        setError("Error inesperado");
+      }
+      if (error.status >= 500) {
+        setError("Ya existe");
+      }
+      //setError(error.message);
+      setLoading(false);
+      console.log(error);
+    }
+
+    if (!error) {
+      const closeButtonElement = document.getElementById("cerrarModal");
+      if (closeButtonElement) {
+        closeButtonElement.click();
+      }
+    }
+  };
+
+
+
+
   useEffect(() => {
     getDepartamentos()
     if (editing) {
       setNombre(departamento?.nombre)
       setEstado(departamento?.estado)
+
+
     }
+
   }, [editing])
 
   return (
@@ -224,8 +281,9 @@ const NuevoDepartamento = () => {
                     <div className="card-header d-flex justify-content-between align-items-center">
                       <h5 className="mb-0">
                         <span class="text-muted fw-light">Departamentos/</span>{" "}
-                        Nuevo Depto
+                        Gestionar
                       </h5>
+
                     </div>
                     <div className="card-body">
                       {mensaje && (
@@ -241,26 +299,24 @@ const NuevoDepartamento = () => {
                       <form>
 
                         <div class="input-group">
-                          <div className="form-floating form-floating-outline mb-4">
+                          <div class="form-floating form-floating-outline mb-4">
                             <input
                               type="text"
-                              maxLength={60}
                               className="form-control"
                               id="nombre"
-                              placeholder="Nombre del Departamento"
+                              placeholder="DEPARTAMENTO"
                               value={nombre}
                               onChange={(e) => setNombre(e.target.value)}
+
                             />
-                            <label htmlFor="nombre">
-                              Nombre del Departamento
+                            <label for="exampleFormControlSelect1">
+                              NOMBRE DEL DEPTO.
                             </label>
                           </div>
 
-                          
                         </div>
-
-
                         <div class="input-group">
+
                           <div class="form-floating form-floating-outline mb-4">
                             <select
                               className="form-select"
@@ -271,12 +327,12 @@ const NuevoDepartamento = () => {
 
                             </select>
                             <label for="exampleFormControlSelect1">
-                              ESTADO DEL DEPTO
+                              ESTADO DEL DEPTO.
                             </label>
                           </div>
 
-                        </div>
 
+                        </div>
 
 
 
@@ -292,6 +348,15 @@ const NuevoDepartamento = () => {
                             <i class="menu-icon tf-icons mdi mdi-sync"></i>
                             Guardar cambios
                           </button>
+                          <button
+                            type="button"
+                            className="btn btn-dark waves-effect waves-light mx-3"
+                            onClick={() => window.location.reload()}
+                            disabled={loading}
+                          >
+                            <i class="menu-icon tf-icons mdi mdi-cancel"></i>
+                            Cancelar
+                          </button>
 
                         </span>) : <button
                           type="button"
@@ -303,6 +368,7 @@ const NuevoDepartamento = () => {
                           Guardar
                         </button>}
 
+
                         {mensaje && (
                           <div
                             className="alert alert-success mt-4"
@@ -313,17 +379,12 @@ const NuevoDepartamento = () => {
                         )}
 
 
-                        {error && (
-                          <div className="alert alert-danger mt-4" role="alert">
-                            {error}!
-                          </div>
-                        )}
                       </form>
 
                       <div className="row my-4 text-center">
                         {/* Deposit / Withdraw */}
                         {/* Data Tables */}
-                        {user.user.rol.nombre == "TECNICO-ARCHIVO" && (
+                        {user?.user?.rol?.nombre && ["ADMINISTRADOR", "TECNICO-ARCHIVO"].includes(user.user.rol.nombre) && (
                           <div className="col-12">
                             {!loadingDepartamentos ? <DepartamentoList
 
@@ -346,7 +407,6 @@ const NuevoDepartamento = () => {
                         {/*/ Data Tables */}
                       </div>
 
-
                       <div className="row my-4 text-center">
                         {/* Deposit / Withdraw */}
                         {/* Data Tables */}
@@ -361,14 +421,23 @@ const NuevoDepartamento = () => {
                 </div>
               </div>
             </div>
+            {/* / Content */}
+            {/* Footer */}
             <Footer />
+            {/* / Footer */}
             <div className="content-backdrop fade" />
           </div>
+          {/* Content wrapper */}
         </div>
+        {/* / Layout page */}
       </div>
+      {/* Overlay */}
       <div className="layout-overlay layout-menu-toggle" />
+
     </div>
   );
 };
 
 export default NuevoDepartamento;
+
+

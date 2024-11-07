@@ -6,49 +6,86 @@ const PrivateRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const userRole = user?.user?.rol?.nombre;
 
 
   const gerentePaths = [
-    '/dashboard', 
-    '/expedientes/ReporteExpediente', 
-    '/combustible/ReporteCombustible', 
+    '/dashboard',
+    '/expedientes/ReporteExpediente',
+    '/combustible/reporteCombustible',
     '/home'
   ];
 
   const asistenteAdminPaths = [
-    '/vehiculos/nuevo', 
-    '/combustible/nuevo', 
-    '/combustible/reporteCombustible', 
-    '/dashboard', 
+    '/vehiculos/nuevo',
+    '/combustible/nuevo',
+    '/combustible/reporteCombustible',
+    '/dashboard',
+    '/unidades/nuevo',
     '/home'
-  ]; 
+  ];
+
+  const tecnicoBodegaPaths = [
+    '/vehiculos/nuevo',
+    '/combustible/nuevo',
+    '/combustible/reporteCombustible',
+    '/dashboard',
+    '/unidades/nuevo',
+    '/home'
+  ];
 
   const administradorPaths = [
-    '/roles/nuevo', 
-    '/editarUsuario', 
+    '/roles/nuevo',
+    '/editarUsuario',
+    '/notificaciones',
+    '/dashboard',
+    '/departamentos/nuevo',
+    '/municipios/nuevo',
+    '/expedientes/nuevo',
+    '/estadoExpedientes/nuevo',
+    '/expedientes/ReporteExpediente',
+    '/vehiculos/nuevo',
+    '/combustible/nuevo',
+    '/combustible/reporteCombustible',
+    '/home',
+    '/estadoExpedientes/nuevo',
+    '/unidades/nuevo',
+  ];
+
+  const tecnicoInformaticaPaths = [
+    '/roles/nuevo',
+    '/editarUsuario',
     '/home'
   ];
 
   const tecnicoArchivoPaths = [
-    '/notificaciones', 
-    '/dashboard', 
-    '/departamentos/nuevo', 
-    '/municipios/nuevo', 
-    '/expedientes/nuevo', 
-    '/estadoExpedientes/nuevo', 
-    '/expedientes/ReporteExpediente', 
+    '/notificaciones',
+    '/dashboard',
+    '/departamentos/nuevo',
+    '/municipios/nuevo',
+    '/expedientes/nuevo',
+    '/estadoExpedientes/nuevo',
+    '/expedientes/ReporteExpediente',
+    '/estadoExpedientes/nuevo',
     '/home'
   ];
 
   // Comprobación de la ruta
   const isAllowedPath =
-  (userRole === 'TECNICO-ARCHIVO' && (tecnicoArchivoPaths.includes(location.pathname) || location.pathname.startsWith('/expedientes/'))) ||
-  (userRole === 'GERENTE' && gerentePaths.includes(location.pathname)) ||
-  (userRole === 'ASISTENTE-ADMINISTRATIVO' && asistenteAdminPaths.includes(location.pathname)) ||
-  (userRole === 'ADMINISTRADOR' && administradorPaths.includes(location.pathname));
-
+    (userRole === 'TECNICO-ARCHIVO' && (tecnicoArchivoPaths.includes(location.pathname) || location.pathname.startsWith('/expedientes/'))) ||
+    (userRole === 'GERENTE' && gerentePaths.includes(location.pathname)) ||
+    (userRole === 'ASISTENTE-ADMINISTRATIVO' && asistenteAdminPaths.includes(location.pathname)) ||
+    (userRole === 'TECNICO-BODEGA' && tecnicoBodegaPaths.includes(location.pathname)) ||
+    (userRole === 'TECNICO-INFORMATICA' && tecnicoInformaticaPaths.includes(location.pathname)) ||
+    //(userRole === 'ADMINISTRADOR' && administradorPaths.includes(location.pathname));
+    (userRole === 'ADMINISTRADOR' && (
+      administradorPaths.includes(location.pathname) ||
+      tecnicoArchivoPaths.includes(location.pathname) ||
+      gerentePaths.includes(location.pathname) ||
+      asistenteAdminPaths.includes(location.pathname) ||
+      location.pathname.startsWith('/expedientes/')
+    ));
 
 
   useEffect(() => {
@@ -65,6 +102,22 @@ const PrivateRoute = ({ children }) => {
 export default PrivateRoute;
 
 
+
+/*
+
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from './../providers/AuthContextProvider';
+
+const PrivateRoute = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+
+  return isAuthenticated ? children : <Navigate to="/login" />;
+};
+
+export default PrivateRoute;
+
+*/
 
 
 

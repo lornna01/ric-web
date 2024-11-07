@@ -21,6 +21,8 @@ const Login = () => {
   const [codigo, setCodigo] = useState();
   const [codigoIngresado, setCodigoIngresado] = useState();
   const [myUser, setMyUser] = useState();
+  const [passwordVisible, setPasswordVisible] = useState(false); // Estado para manejar la visibilidad de la contraseña
+
 
   const verifyOTP = async (e) => {
     e.preventDefault();
@@ -38,157 +40,196 @@ const Login = () => {
     setCodigo()
   }
 
-  const handleLogin = async (e) =>  {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-  try {
-    const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`,
-      {email,password}
-    );
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`,
+        { email, password }
+      );
 
-    //if (response.status == 200) {
-    if (response.status == 200) {
-      setCodigo(response.data.codigo)
-      setMyUser(response.data)
-      //login(response.data)
-      //navigate('/home');
-      toast.success("Ingrese su código OTP")
-      setError('');
-    } else {
-      setError('Usuario no activo, consulta un administrador.');
-    }
-    // Handle successful login
+      //if (response.status == 200) {
+      if (response.status == 200) {
+
+        /* PARA INGRESAR CON CODIGO OTP
+        
+        setCodigo(response.data.codigo)
+        setMyUser(response.data)
+        
+        */
+        setCodigo(response.data.codigo)
+        setMyUser(response.data)
+
+        
+        /* PARA INGRESAR SIN CODIGO OTP 
+        
+          login(response.data)
+          navigate('/home');
+        
+        */      
+        //login(response.data)
+        //navigate('/home');
+        toast.success("Ingrese su código OTP")
+        setError('');
+      } else {
+        setError('Usuario no activo, consulta un administrador.');
+      }
+      // Handle successful login
       //console.log("Login successful!", response.data);
-      
+
       setLoading(false);
     } catch (error) {
       //console.error("Login failed:", error);
       if (error.response.status >= 400 && error.response.status < 500) {
         setError("Usuario o contraseña incorrectos.");
       }
-        //setError(error.message);
+      //setError(error.message);
       setLoading(false);
       //console.log(error.response.status);
     }
-      
-  };
-  
-  
-  
 
-  return user?<Home/>:(
+  };
+
+
+
+
+  return user ? <Home /> : (
     <>
-<div className="container-xxl">
-  <div className="authentication-wrapper authentication-basic container-p-y">
-    <div className="authentication-inner">
-      {/* Register */}
-      <div className="card">
-        <div className="card-body">
-          {/* Logo */}
-          <div className="app-brand justify-content-center">
-            <a href="index.html" className="app-brand-link gap-2">
-              <span className="app-brand-logo demo">
-              <img src="/img/ric.jpeg" alt="" width={'150'} />
-              </span>
-              Panel Administrativo RIC-Petén
-            </a>
-          </div>
-          {/* /Logo */}
-          <h4 className="mb-2">Bienvenid@ 👋</h4>
-          <p className="mb-4">Inicie sesión.</p>
-          {!codigo ?<form id="formAuthentication" className="mb-3" action="index.html">
-            <div className="mb-3">
-              <label htmlFor="email" className="form-label">Correo electrónico</label>
-              <input type="text" className="form-control" id="email" name="email"
-                          value={email}
+      <div className="container-xxl">
+        <div className="authentication-wrapper authentication-basic container-p-y">
+          <div className="authentication-inner">
+            {/* Register */}
+            <div className="card">
+              <div className="card-body">
+                {/* Logo */}
+                <div className="app-brand justify-content-center">
+                  <a href="index.html" className="app-brand-link gap-2">
+                    <span className="app-brand-logo demo">
+                      <img src="/img/ric.jpeg" alt="" width={'150'} />
+                    </span>
+                    Panel Administrativo RIC-Petén
+                  </a>
+                </div>
+                {/* /Logo */}
+                <h4 className="mb-2">Bienvenid@ 👋</h4>
+                <p className="mb-4">Inicie sesión.</p>
+                {!codigo ? <form id="formAuthentication" className="mb-3" action="index.html">
+                  <div className="mb-3">
+                    <label htmlFor="email" className="form-label">Correo electrónico</label>
+                    <input type="text" className="form-control" id="email" name="email"
+                      value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Ingrese su correo electrónico" autoFocus />
-            </div>
-            <div className="mb-3 form-password-toggle">
-              <div className="d-flex justify-content-between">
-                <label className="form-label" htmlFor="password">Contraseña</label>
-               
-              </div>
-              <div className="input-group input-group-merge">
-                      <input type="password" id="password" className="form-control"
+                  </div>
+                  <div className="mb-3 form-password-toggle">
+                    <div className="d-flex justify-content-between">
+                      <label className="form-label" htmlFor="password">Contraseña</label>
+
+                    </div>
+                    <div className="input-group input-group-merge">
+                      <input
+                        type={passwordVisible ? "text" : "password"} // Cambiar el tipo de input
+                        id="password"
+                        className="form-control"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="············" aria-describedby="password" />
-                <span className="input-group-text cursor-pointer"><i className="" /></span>
-              </div>
-            </div>
+                      <span
+                        className="input-group-text cursor-pointer"
+                        onClick={() => setPasswordVisible(!passwordVisible)} // Alternar visibilidad
+                      >
+                        <i className={passwordVisible ? "bx bx-show" : "bx bx-hide"} />
+                      </span>
+                    </div>
+                  </div>
+
 
                   <div className="mb-3">
                     <button
-                     disabled={loading}
-                     onClick={handleLogin} 
+                      disabled={loading}
+                      onClick={handleLogin}
                       className="btn rounded-pill btn-primary d-grid w-100" type="button">
                       {loading ?
                         <div class="spinner-border text-success" role="status">
                           <span class="visually-hidden">Loading...</span>
                         </div> : "Iniciar sesión"}
                     </button>
-            </div>
+                  </div>
                 </form> :
-          <form id="formAuthentication" className="mb-3" action="index.html">
-          
-          <div className="mb-3 form-password-toggle">
-            <div className="d-flex justify-content-between">
-              <label className="form-label" htmlFor="password">Código de verificación OTP</label>
-             
-            </div>
-            <div className="input">
+                  <form id="formAuthentication" className="mb-3" action="index.html">
+
+                    <div className="mb-3 form-password-toggle">
+                      <div className="d-flex justify-content-between">
+                        <label className="form-label" htmlFor="password">Código de verificación OTP</label>
+
+                      </div>
+                      <div className="input">
                         <input type="text" id="password" className="form-control text-center"
                           maxLength={6}
-                      value={codigoIngresado}
-                      onChange={(e) => setCodigoIngresado(e.target.value)}
-                      placeholder="Ingrese su código" aria-describedby="password" />
-              
-            </div>
-          </div>
+                          value={codigoIngresado}
+                          onChange={(e) => setCodigoIngresado(e.target.value)}
+                          placeholder="Ingrese su código" aria-describedby="password" />
 
-                <div className="mb-3">
-                  <button
-                   disabled={loading}
-                   onClick={verifyOTP} 
-                    className="btn rounded-pill btn-primary d-grid w-100" type="button">
-                    {loading ?
-                      <div class="spinner-border text-success" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                      </div> : "Verificar"}
-                      </button>
-                      
+                      </div>
+                    </div>
+
+                    <div className="mb-3">
                       <button
-                   disabled={loading}
-                   onClick={cancelOTP} 
-                    className="btn rounded-pill btn-dark d-grid w-100 mt-2" type="button">
-                    {loading ?
-                      <div class="spinner-border text-success" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                      </div> : "Cancelar"}
-                  </button>
-          </div>
-        </form>
-          }
+                        disabled={loading}
+                        onClick={verifyOTP}
+                        className="btn rounded-pill btn-primary d-grid w-100" type="button">
+                        {loading ?
+                          <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                          </div> : "Verificar"}
+                      </button>
+
+                      <button
+                        disabled={loading}
+                        onClick={cancelOTP}
+                        className="btn rounded-pill btn-dark d-grid w-100 mt-2" type="button">
+                        {loading ?
+                          <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                          </div> : "Cancelar"}
+                      </button>
+                    </div>
+                  </form>
+                }
                 <p className="text-center">
                   {error &&
-                  <div className="alert alert-danger alert-dismissible" role="alert">
-                  {error}
-                  <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+                    <div className="alert alert-danger alert-dismissible" role="alert">
+                      {error}
+                      <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                   }
 
                 </p>
-                
-                      
 
+
+
+                <div className="d-flex justify-content-center gap-3 mt-4">
+                  {/* Imagen del logo de Google */}
+                  <a href="https://portal.ric.gob.gt/" target="_blank" rel="noopener noreferrer">
+                    <img src="/img/icons/brands/google.png" alt="Google logo" width="25" style={{ cursor: 'pointer' }} />
+                  </a>
+
+                  {/* Imagen del logo de Facebook */}
+                  <a href="https://www.facebook.com/ricguatemala/?locale=es_LA" target="_blank" rel="noopener noreferrer">
+                    <img src="/img/icons/brands/facebook.png" alt="Facebook logo" width="25" style={{ cursor: 'pointer' }} />
+                  </a>
+                </div>
+
+
+
+
+              </div>
+            </div>
+            {/* /Register */}
+          </div>
         </div>
       </div>
-      {/* /Register */}
-    </div>
-  </div>
-</div>
 
 
     </>

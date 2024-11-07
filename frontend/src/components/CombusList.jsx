@@ -47,6 +47,8 @@ const CombustibleList = ({
   const [consumo, setConsumo] = useState();
   const [rendimiento, setRendimiento] = useState();
 
+  const [unidades, setUnidades] = useState([]);
+
   const [pdfFile, setPdfFile] = useState(null);
   const [pdfs, setPdfs] = useState({});
 
@@ -59,23 +61,24 @@ const CombustibleList = ({
     },
   });
 
+
+
   const verPDF = (pdfBase64) => {
     // Decodificar Base64 y convertir a un Blob
     const pdfBlob = new Blob([new Uint8Array(atob(pdfBase64.pdf).split('').map(c => c.charCodeAt(0)))], { type: 'application/pdf' });
-
+    
     // Crear una URL temporal para el Blob
     const url = URL.createObjectURL(pdfBlob);
-
+    
     // Abrir el PDF en una nueva pestaña
     window.open(url, '_blank');
-
+    
     // Liberar la URL cuando ya no sea necesaria
     URL.revokeObjectURL(url);
   };
 
 
-
-/*  
+  
   const deleteConfirm = async (vehi) => {
     if (confirm("Realmente quiere eliminar a " + vehi.placa + "??")) {
       await deleteVehiculo(vehi);
@@ -95,28 +98,7 @@ const CombustibleList = ({
     }
 
   }
-  */
-  const deleteConfirm = async (vehi) => {
-    if (confirm("Realmente quiere eliminar a "+vehi.placa+"??")) {
-      await deleteVehiculo(vehi);
-      window.location.reload();
-      //getUsers();
-    } 
-    
-  }
 
-  const deleteConfirmComb = async (comb) => {
-    if (confirm("Realmente quiere eliminar la asignacion de "+comb.placa+" - "+new Date(comb.fecha).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })+"??")) {
-      await deleteCombustible(comb);
-      window.location.reload();
-      getCombustible();
-    } 
-    
-  }
 
 
 
@@ -244,7 +226,7 @@ const update = async (id) => {
         placa: vehiculo?.placa,
         kilometraje_inicial: kilometrajeInicial,
         kilometraje_final: kilometrajeFinal,
-        chofer,
+        chofer: choferActual,
         cupon_desde: cuponDesde,
         cupon_hasta: cuponHasta,
         denominacion,
@@ -390,7 +372,6 @@ const update = async (id) => {
     }
   };
 
-
   
 
   const handleFile = (event, id) => {
@@ -410,6 +391,38 @@ const update = async (id) => {
 
 
 
+  const getUnidades = async () => {
+    setLoading(true);
+
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/unidades`,
+        {
+          headers: {
+            Authorization: `${user.type} ${user.token}`
+          }
+        }
+      );
+      // Handle successful login
+      console.log("successful!", response.data);
+      setUnidades(response.data);
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Login failed:", error);
+      if (error.status >= 400 && error.status < 500) {
+        setError("No se puede.");
+      }
+      //setError(error.message);
+      setLoading(false);
+      //console.log(error.response.status);
+    }
+  };
+
+  useEffect(() => {
+    getUnidades();
+  }, []);
+
+
   return (
     <div className="card">
       {error && (
@@ -422,7 +435,7 @@ const update = async (id) => {
         <table className="table">
           <thead className="table-light">
             <tr>
-              
+              <th className="text-truncate">ID</th>
               <th className="text-truncate">Fecha</th>
               <th className="text-truncate">Chofer</th>
               <th className="text-truncate">Unidad</th>
@@ -431,7 +444,6 @@ const update = async (id) => {
               <th className="text-truncate">Km Recorridos</th>
               <th className="text-truncate">Cupones</th>
               <th className="text-truncate">Denominación (Q.)</th>
-              <th className="text-truncate">Total (Q.)</th>
               <th className="text-truncate">Saldo Inicio</th>
               <th className="text-truncate">Saldo Final</th>
               <th className="text-truncate">Galones</th>
@@ -447,8 +459,10 @@ const update = async (id) => {
             {combustibleList.map((item) => {
               return (
                 <tr key={item.id}>
-                  
- 
+                  <td>
+                    {item.id}
+                  </td>
+
                   <td>
                     {new Date(item.fecha).toLocaleDateString('es-ES', {
                       day: '2-digit',
@@ -490,10 +504,6 @@ const update = async (id) => {
                   <td>
                     {item.denominacion.toLocaleString('es-ES', { style: 'currency', currency: 'Q' })}
                   </td>
-                  <td>
-                    {/* Resultado de la multiplicación */}
-                    {(item.denominacion * ((item.cuponHasta - item.cuponDesde) + 1))}
-                  </td>
                   <td className="text-truncate">{item.saldoInicio}</td>
                   <td className="text-truncate">{item.saldoFinal}</td>
                   <td className="text-truncate">{item.galones}</td>
@@ -510,43 +520,19 @@ const update = async (id) => {
                       }}
                               className="btn rounded-pill btn-success m-1"
                             >
-                      <i className="bx bx-download"></i>
+                      <i className="mdi mdi-download"></i>
                     </button>}
 
-                  <button
-                      type="button"
-                      className="btn rounded-pill btn-info m-1"
-                      data-bs-toggle="modal"
-                      data-bs-target="#modalEditar"
-                      onClick={() => {
-                        setChoferActual(item.chofer)
-                        setUnidad(item.unidad)
-                        setFechaAsignacion(item.fechaAsignacion)
-                        setKilometrajeInicial(item.kilometrajeInicial)
-                        setKilometrajeFinal(item.kilometrajeFinal)
-                        setCuponDesde(item.cuponDesde)
-                        setCuponHasta(item.cuponHasta)
-                        setDenominacion(item.denominacion)
-                        setEstado(item.estado)
-                        setNombre(item.nombre)
-                        setSaldoInicio(item.saldoInicio)
-                        setSaldoFinal(item.saldoFinal)
-                        setGalones(item.galones)
-                        setConsumo(item.consumo)
-                        setRendimiento(item.rendimiento)
-                        setObservacionCupon(item.observacionCupon)
-                        
-                      }}
-                    >
-                      <i className="bx bx-edit"></i>
-                    </button>
+             
+
+                    
 
                     <button
                       onClick={() => {
                         deleteConfirmComb(item)
 
                       }}
-                      disabled={item.rol?.nombre == "ADMINISTRADOR"}
+                      disabled={item.rol?.nombre == "ASISTENTE-ADMINISTRATIVO"}
                       type="button"
                       className="btn rounded-pill btn-danger m-1"
                     >
@@ -560,7 +546,7 @@ const update = async (id) => {
         </table>
       </div>
 
-      {/* MODAL PARA EDITAR COMBUSTIBLE */}
+      {/* MODAL PARA AGREGAR COMBUSTIBLE */}
       <div
         className="modal fade"
         id="modalEditar"
@@ -574,7 +560,7 @@ const update = async (id) => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title" id="exampleModalLabel1">
-                  Asignar Combustible al vehículo de placa: <strong className="text-danger">{vehiculo?.placa}</strong>
+                  Asignar Combustible al vehículo de placa: <strong>{vehiculo?.placa}</strong>
                 </h5>
                 <button
                   type="button"
@@ -714,7 +700,7 @@ const update = async (id) => {
                       type="number"
                       id="saldoinicio"
                       className="form-control"
-                      placeholder="0"
+                      placeholder=""
                     />
                   </div>
                   <div className="col mb-0">
@@ -727,7 +713,7 @@ const update = async (id) => {
                       type="number"
                       id="saldofinal"
                       className="form-control"
-                      placeholder="0"
+                      placeholder=""
                     />
                   </div>
                 </div>
@@ -744,7 +730,7 @@ const update = async (id) => {
                       type="number"
                       id="galones"
                       className="form-control"
-                      placeholder="0"
+                      placeholder=""
                     />
                   </div>
                   <div className="col mb-0">
@@ -757,7 +743,7 @@ const update = async (id) => {
                       type="number"
                       id="consumo"
                       className="form-control"
-                      placeholder="0"
+                      placeholder=""
                     />
                   </div>
                 </div>
@@ -774,27 +760,23 @@ const update = async (id) => {
                       type="number"
                       id="rendimiento"
                       className="form-control"
-                      placeholder="0"
+                      placeholder=""
                     />
-                  </div>
+                  </div>  
 
                   <div className="col mb-0">
                     <label htmlFor="unidad" className="form-label">
                       Unidad
                     </label>
                     <input
+                      value={unidad}
+                      onChange={(e) => setUnidad(e.target.value)}
                       type="text"
                       id="unidad"
                       className="form-control"
-                      value={unidad}
-                      onChange={(e) => setUnidad(e.target.value)}
-                      placeholder="Escribe la unidad"
+                      placeholder="Ingrese la unidad"
                     />
-                  </div>
-
-
-
-
+                  </div>           
                 </div>
 
 
@@ -807,6 +789,7 @@ const update = async (id) => {
                     style={{ height: 100 }}
                     defaultValue={""}
                     value={observacionCupon}
+                    maxLength={255}
                     onChange={(e) => setObservacionCupon(e.target.value)}
                   />
                   <label htmlFor="basic-default-message">
@@ -814,14 +797,14 @@ const update = async (id) => {
                   </label>
                 </div>
                 <div class="form-floating form-floating-outline mb-4">
-                  <input class="form-control" type="file" id="formFile" accept="application/pdf"
-                    onChange={handleFileChange}
-                  />
-                  <label for="exampleFormControlSelect1">
-                    PDF
-                  </label>
-                  {pdf && <embed className="mt-3" src={`data:application/pdf;base64,${pdf}`} width='100%' />}
-                </div>
+                          <input class="form-control" type="file" id="formFile" accept="application/pdf"
+                          onChange={handleFileChange}
+                          />
+                          <label for="exampleFormControlSelect1">
+                            PDF
+                          </label>
+                          {pdf && <embed className="mt-3" src={`data:application/pdf;base64,${pdf}`} width='100%'  />}
+                        </div>
 
                 
                 <div className="row mt-3">
@@ -888,7 +871,7 @@ const update = async (id) => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title" id="exampleModalLabel1">
-                  Asignar Combustible al vehículo de placa: <strong className="text-danger">{vehiculo?.placa}</strong>
+                  Asignar Combustible al vehículo de placa: <strong>{vehiculo?.placa}</strong>
                 </h5>
                 <button
                   type="button"
@@ -1028,7 +1011,7 @@ const update = async (id) => {
                       type="number"
                       id="saldoinicio"
                       className="form-control"
-                      placeholder="0"
+                      placeholder=""
                     />
                   </div>
                   <div className="col mb-0">
@@ -1041,7 +1024,7 @@ const update = async (id) => {
                       type="number"
                       id="saldofinal"
                       className="form-control"
-                      placeholder="0"
+                      placeholder=""
                     />
                   </div>
                 </div>
@@ -1058,7 +1041,7 @@ const update = async (id) => {
                       type="number"
                       id="galones"
                       className="form-control"
-                      placeholder="0"
+                      placeholder=""
                     />
                   </div>
                   <div className="col mb-0">
@@ -1071,7 +1054,7 @@ const update = async (id) => {
                       type="number"
                       id="consumo"
                       className="form-control"
-                      placeholder="0"
+                      placeholder=""
                     />
                   </div>
                 </div>
@@ -1088,27 +1071,23 @@ const update = async (id) => {
                       type="number"
                       id="rendimiento"
                       className="form-control"
-                      placeholder="0"
+                      placeholder=""
                     />
                   </div>  
 
-                  
                   <div className="col mb-0">
                     <label htmlFor="unidad" className="form-label">
                       Unidad
                     </label>
                     <input
+                      value={unidad}
+                      onChange={(e) => setUnidad(e.target.value)}
                       type="text"
                       id="unidad"
                       className="form-control"
-                      value={unidad}
-                      onChange={(e) => setUnidad(e.target.value)}
-                      placeholder="Escribe la unidad"
+                      placeholder="Ingrese la unidad"
                     />
-                  </div>
-
-                  
-                    
+                  </div>   
                 </div>
 
 
@@ -1120,7 +1099,8 @@ const update = async (id) => {
                     placeholder="Detalles adicionales"
                     style={{ height: 100 }}
                     defaultValue={""}
-                    value={observacionCupon}                    
+                    value={observacionCupon}
+                    maxLength={255}
                     onChange={(e) => setObservacionCupon(e.target.value)}
                   />
                   <label htmlFor="basic-default-message">
@@ -1167,11 +1147,11 @@ const update = async (id) => {
                 >
                   Cerrar
                 </button>
-                <button disabled={loading} onClick={save} type="button" className="btn btn-success">
+                <button disabled={loading} onClick={update} type="button" className="btn btn-success">
                   {loading ?
                     <div className="spinner-border text-success" role="status">
                       <span className="visually-hidden">Loading...</span>
-                    </div> : "Guardar"}
+                    </div> : "Guardar cambios"}
                 </button>
 
 

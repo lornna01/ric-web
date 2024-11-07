@@ -21,7 +21,7 @@ const NuevoVehiculo = () => {
       Authorization: `${user.type} ${user.token}`, // Token de autorización
     },
   });
-  
+
 
 
   const [error, setError] = useState("");
@@ -54,7 +54,7 @@ const NuevoVehiculo = () => {
     }
   };
 
-  
+
   const save = async () => {
     setMensaje("");
     setError("");
@@ -81,10 +81,10 @@ const NuevoVehiculo = () => {
           modelo,
           chofer,
           comentarios,
-          foto:archivo
+          foto: archivo
         }
       );
-      
+
 
       if (response.status === 201) {
         toast.success("Vehículo creado con éxito!!")
@@ -142,10 +142,10 @@ const NuevoVehiculo = () => {
           modelo,
           chofer,
           comentarios,
-          foto:archivo
+          foto: archivo
         }
       );
-      
+
 
       if (response.status === 200) {
         toast.success("Vehículo actualizado con éxito!!")
@@ -160,7 +160,7 @@ const NuevoVehiculo = () => {
       if (error.response.status === 400) {
         setError(error.response.data.message);
 
-  
+
       }
       if (error.status >= 400 && error.response.status < 500) {
         setError("Error inesperado");
@@ -193,7 +193,7 @@ const NuevoVehiculo = () => {
 
     try {
       const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/vehiculosByPlaca/${placa}`);
-      
+
 
       if (response.status === 200) {
         await getCombustible()
@@ -211,7 +211,7 @@ const NuevoVehiculo = () => {
       }
       setLoading(false);
       setError();
-      
+
     } catch (error) {
       setEditing(false);
       if (error.response.status === 400) {
@@ -255,7 +255,7 @@ const NuevoVehiculo = () => {
 
     try {
       const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/combustible?placa=${placa}`);
-      
+
 
       if (response.status === 200) {
         //setMensaje("Vehículo creado con éxito!!");
@@ -303,13 +303,13 @@ const NuevoVehiculo = () => {
 
     try {
       const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/vehiculos`);
-      
+
 
       if (response.status === 200) {
         //setMensaje("Vehículo creado con éxito!!");
         console.log(response.data)
         setVehiculoList(response.data)
-       setLoadingVehiculos(false)
+        setLoadingVehiculos(false)
       }
       setLoading(false);
       setError();
@@ -352,13 +352,13 @@ const NuevoVehiculo = () => {
 
     try {
       const response = await axiosInstance.delete(`${import.meta.env.VITE_API_URL}/vehiculos/${vehiculo.id}`);
-      
+
       if (response.status === 200) {
         toast.success("Vehículo eliminado con éxito!!")
         //setMensaje("Vehículo creado con éxito!!");
         console.log(response.data)
         getVehiculos()
-       
+
       }
       setLoading(false);
       setError();
@@ -401,13 +401,13 @@ const NuevoVehiculo = () => {
 
     try {
       const response = await axiosInstance.delete(`${import.meta.env.VITE_API_URL}/combustible/${combustib.id}`);
-      
+
       if (response.status === 200) {
         toast.success("Item eliminado con éxito!!")
         //setMensaje("Vehículo creado con éxito!!");
         console.log(response.data)
         getVehiculos()
-       
+
       }
       setLoading(false);
       setError();
@@ -442,7 +442,7 @@ const NuevoVehiculo = () => {
     }
   };
 
-  useEffect(() =>{
+  useEffect(() => {
     getVehiculos()
     if (editing) {
       setPropietario(vehiculo?.propietario)
@@ -452,7 +452,7 @@ const NuevoVehiculo = () => {
       setComentarios(vehiculo?.comentarios)
       setArchivo(vehiculo?.foto)
     }
- },[editing])
+  }, [editing])
 
   return (
     <div className="layout-wrapper layout-content-navbar">
@@ -473,7 +473,7 @@ const NuevoVehiculo = () => {
                     <div className="card-header d-flex justify-content-between align-items-center">
                       <h5 className="mb-0">
                         <span class="text-muted fw-light">Vehículos/</span>{" "}
-                        Nuevo vehículo  
+                        Nuevo vehículo
                       </h5>
                     </div>
                     <div className="card-body">
@@ -488,75 +488,75 @@ const NuevoVehiculo = () => {
                         </div>
                       )}
                       <form>
-                      <div class="form-floating form-floating-outline mb-4">
-                      <input
-                              type="text"
-                              maxLength={60}
-                              className="form-control"
-                              id="titular"
-                              placeholder="Juan Pablo Ramirez"
-                              value={propietario}
-                              onChange={(e) => setPropietario(e.target.value)}
-                            />
+                        <div class="form-floating form-floating-outline mb-4">
+                          <input
+                            type="text"
+                            maxLength={60}
+                            className="form-control"
+                            id="titular"
+                            placeholder="Juan Pablo Ramirez"
+                            value={propietario}
+                            onChange={(e) => setPropietario(e.target.value)}
+                          />
                           <label for="exampleFormControlSelect1">
                             Propietario del vehículo
                           </label>
-                      </div>
-                      <div className="input-group">
-    <div className="row g-3 mb-4">
-        <div className="col-12 col-md-4">
-            <div className="form-floating">
-                <input
-                    type="text"
-                    maxLength={60}
-                    className="form-control"
-                    id="placa"
-                    placeholder="ABC123"
-                    value={placa}
-                    onChange={(e) => setPlaca(e.target.value.toUpperCase())}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            if (placa.length > 3) {
-                                findByPlaca();
-                            } else {
-                                toast.error('Ingrese una placa válida');
-                            }
-                        }
-                    }}
-                />
-                <label htmlFor="placa">Placa del vehículo</label>
-            </div>
-        </div>
-        <div className="col-12 col-md-4">
-            <div className="form-floating">
-                <input
-                    type="number"
-                    maxLength={4}
-                    className="form-control"
-                    id="modelo"
-                    placeholder="2024"
-                    value={modelo}
-                    onChange={(e) => setModelo(e.target.value)}
-                />
-                <label htmlFor="modelo">Modelo del Vehículo</label>
-            </div>
-        </div>
-        <div className="col-12 col-md-4">
-            <div className="form-floating">
-                <input
-                    type="text"
-                    maxLength={60}
-                    className="form-control"
-                    id="chofer"
-                    placeholder="Juan Pablo Ramirez"
-                    value={chofer}
-                    onChange={(e) => setChofer(e.target.value)}
-                />
-                <label htmlFor="chofer">Chofer (usuario asignado)</label>
-            </div>
-        </div>
-    </div>
-</div>
+                        </div>
+                        <div className="input-group">
+                          <div className="row g-3 mb-4">
+                            <div className="col-12 col-md-4">
+                              <div className="form-floating">
+                                <input
+                                  type="text"
+                                  maxLength={60}
+                                  className="form-control"
+                                  id="placa"
+                                  placeholder="ABC123"
+                                  value={placa}
+                                  onChange={(e) => setPlaca(e.target.value.toUpperCase())}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      if (placa.length > 3) {
+                                        findByPlaca();
+                                      } else {
+                                        toast.error('Ingrese una placa válida');
+                                      }
+                                    }
+                                  }}
+                                />
+                                <label htmlFor="placa">Placa del vehículo</label>
+                              </div>
+                            </div>
+                            <div className="col-12 col-md-4">
+                              <div className="form-floating">
+                                <input
+                                  type="number"
+                                  maxLength={4}
+                                  className="form-control"
+                                  id="modelo"
+                                  placeholder="2024"
+                                  value={modelo}
+                                  onChange={(e) => setModelo(e.target.value)}
+                                />
+                                <label htmlFor="modelo">Modelo del Vehículo</label>
+                              </div>
+                            </div>
+                            <div className="col-12 col-md-4">
+                              <div className="form-floating">
+                                <input
+                                  type="text"
+                                  maxLength={60}
+                                  className="form-control"
+                                  id="chofer"
+                                  placeholder="Juan Pablo Ramirez"
+                                  value={chofer}
+                                  onChange={(e) => setChofer(e.target.value)}
+                                />
+                                <label htmlFor="chofer">Chofer (usuario asignado)</label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
 
                         <div className="form-floating form-floating-outline mb-4">
                           <textarea
@@ -576,7 +576,7 @@ const NuevoVehiculo = () => {
 
                         <div class="form-floating form-floating-outline mb-4">
                           <input class="form-control" type="file" id="formFile" accept="image/*"
-                          onChange={handleFileChange}
+                            onChange={handleFileChange}
                           />
                           <label for="exampleFormControlSelect1">
                             Foto
@@ -584,19 +584,19 @@ const NuevoVehiculo = () => {
                           {archivo && <img src={`data:image/png;base64,${archivo}`} width='100%' alt="" />}
                         </div>
 
-                        
+
                         {editing ? (<span>
                           <button
-                          type="button"
-                          className="btn btn-warning waves-effect waves-light"
-                          onClick={update}
-                          disabled={loading}
-                        >
-                          <i class="menu-icon tf-icons mdi mdi-sync"></i>
-                          Guardar cambios
-                          </button> 
-                          
-                        </span> ):<button
+                            type="button"
+                            className="btn btn-warning waves-effect waves-light"
+                            onClick={update}
+                            disabled={loading}
+                          >
+                            <i class="menu-icon tf-icons mdi mdi-sync"></i>
+                            Guardar cambios
+                          </button>
+
+                        </span>) : <button
                           type="button"
                           className="btn btn-primary waves-effect waves-light"
                           onClick={save}
@@ -617,7 +617,7 @@ const NuevoVehiculo = () => {
                           <i class="menu-icon tf-icons mdi mdi-close"></i>
                           Borrar imagen
                         </button>}
-                        
+
                         {mensaje && (
                           <div
                             className="alert alert-success mt-4"
@@ -635,40 +635,42 @@ const NuevoVehiculo = () => {
                       </form>
 
                       <div className="row my-4 text-center">
-                      {/* Deposit / Withdraw */}
-                      {/* Data Tables */}
-                      {user.user.rol.nombre == "ASISTENTE-ADMINISTRATIVO" && (
-                        <div className="col-12">
-                            {!loadingVehiculos ? <VehiculoList
-                              deleteVehiculo ={deleteVehiculo}
-                            vehiculoList={vehiculoList}
-                            getVehiculos={getVehiculos}
-                              error={error}
-                              vehiculo={vehiculo}
-                              setVehiculo={setVehiculo}
-                              setEditing={setEditing}
-                              user={user}
-                              setMensaje={setMensaje}
-                            setError={setError}
-                            loading={loading}
-                            setLoading={setLoading}
-                          />:(<div className="spinner-grow text-success" role="status">
-                        </div>)}
-                        </div>
-                      )}
+                        {/* Deposit / Withdraw */}
+                        {/* Data Tables */}
+                        {(user.user.rol.nombre === "ADMINISTRADOR" ||
+                          user.user.rol.nombre === "TECNICO-BODEGA" ||
+                          user.user.rol.nombre === "ASISTENTE-ADMINISTRATIVO") && (
+                            <div className="col-12">
+                              {!loadingVehiculos ? <VehiculoList
+                                deleteVehiculo={deleteVehiculo}
+                                vehiculoList={vehiculoList}
+                                getVehiculos={getVehiculos}
+                                error={error}
+                                vehiculo={vehiculo}
+                                setVehiculo={setVehiculo}
+                                setEditing={setEditing}
+                                user={user}
+                                setMensaje={setMensaje}
+                                setError={setError}
+                                loading={loading}
+                                setLoading={setLoading}
+                              /> : (<div className="spinner-grow text-success" role="status">
+                              </div>)}
+                            </div>
+                          )}
 
-                      {/*/ Data Tables */}
+                        {/*/ Data Tables */}
                       </div>
 
                       <div className="row my-4 text-center">
-                      {/* Deposit / Withdraw */}
-                      {/* Data Tables */}
-                      
+                        {/* Deposit / Withdraw */}
+                        {/* Data Tables */}
 
-                      {/*/ Data Tables */}
+
+                        {/*/ Data Tables */}
                       </div>
-                      
-                      
+
+
                     </div>
                   </div>
                 </div>
@@ -686,7 +688,7 @@ const NuevoVehiculo = () => {
       </div>
       {/* Overlay */}
       <div className="layout-overlay layout-menu-toggle" />
-      
+
     </div>
   );
 };

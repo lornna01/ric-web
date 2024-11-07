@@ -3,7 +3,7 @@ import axios from "axios";
 import { API_URL_AUTH } from "../services/auth/authConstants";
 import toast from "react-hot-toast";
 
-const VehiculoList = ({ user,vehiculoList,setMensaje, getVehiculos,vehiculo,setVehiculo,setEditing, loading,setLoading,error,setError,deleteVehiculo }) => {
+const VehiculoList = ({ user, vehiculoList, setMensaje, getVehiculos, vehiculo, setVehiculo, setEditing, loading, setLoading, error, setError, deleteVehiculo }) => {
   const [roles, setRoles] = useState([]);
   const [nombre, setNombre] = useState();
   const [idRol, setIdRol] = useState();
@@ -12,7 +12,7 @@ const VehiculoList = ({ user,vehiculoList,setMensaje, getVehiculos,vehiculo,setV
   const [estado, setEstado] = useState();
   const [correo, setCorreo] = useState();
 
-  
+
   const [kilometrajeInicial, setKilometrajeInicial] = useState();
   const [kilometrajeFinal, setKilometrajeFinal] = useState();
   const [saldo, setSaldo] = useState();
@@ -23,7 +23,7 @@ const VehiculoList = ({ user,vehiculoList,setMensaje, getVehiculos,vehiculo,setV
   const [pdf, setPdf] = useState();
   const [choferActual, setChoferActual] = useState(vehiculo?.chofer);
   const [fechaAsignacion, setFechaAsignacion] = useState();
-  
+
   const axiosInstance = axios.create({
     baseURL: `${import.meta.env.VITE_API_URL}`, // URL base de tu API
     headers: {
@@ -31,8 +31,8 @@ const VehiculoList = ({ user,vehiculoList,setMensaje, getVehiculos,vehiculo,setV
       Authorization: `${user.type} ${user.token}`, // Token de autorización
     },
   });
-  
-   
+
+
   const save = async () => {
     setMensaje("");
     setError("");
@@ -66,20 +66,20 @@ const VehiculoList = ({ user,vehiculoList,setMensaje, getVehiculos,vehiculo,setV
         `${import.meta.env.VITE_API_URL}/combustible`,
         {
           usuario_id: user?.user?.id,
-          fecha:fechaAsignacion,
-          placa:vehiculo?.placa,
-          kilometraje_inicial:kilometrajeInicial,
-          kilometraje_final:kilometrajeFinal,
+          fecha: fechaAsignacion,
+          placa: vehiculo?.placa,
+          kilometraje_inicial: kilometrajeInicial,
+          kilometraje_final: kilometrajeFinal,
           chofer: choferActual,
-          cupon_desde:cuponDesde,
-          cupon_hasta:cuponHasta,
+          cupon_desde: cuponDesde,
+          cupon_hasta: cuponHasta,
           denominacion,
           estado_cupon: estadoCupon,
-          observacion_cupon:observacionCupon,
+          observacion_cupon: observacionCupon,
           pdf
         }
       );
-      
+
 
       if (response.status === 201) {
         toast.success("Asignación creada con éxito!!")
@@ -126,13 +126,13 @@ const VehiculoList = ({ user,vehiculoList,setMensaje, getVehiculos,vehiculo,setV
   };
 
   const deleteConfirm = async (vehi) => {
-    if (confirm("Realmente quiere eliminar a "+vehi.placa+"??")) {
+    if (confirm("Realmente quiere eliminar a " + vehi.placa + "??")) {
       await deleteVehiculo(vehi);
       //getUsers();
-    } 
-    
+    }
+
   }
-  
+
 
 
 
@@ -175,9 +175,9 @@ const VehiculoList = ({ user,vehiculoList,setMensaje, getVehiculos,vehiculo,setV
                     <i className="mdi mdi-car mdi-24px text-danger me-1" />{" "}
                     {item.modelo}
                   </td>
-                 
+
                   <td>
-                      {item.chofer}
+                    {item.chofer}
                   </td>
                   <td>
                     <button
@@ -190,7 +190,7 @@ const VehiculoList = ({ user,vehiculoList,setMensaje, getVehiculos,vehiculo,setV
                     >
                       <i className="bx bx-edit"></i>
                     </button>
-                    
+
                     <button
                       onClick={() => {
                         deleteConfirm(item)
@@ -218,129 +218,129 @@ const VehiculoList = ({ user,vehiculoList,setMensaje, getVehiculos,vehiculo,setV
         aria-hidden="true"
       >
         <form id="nuevoCombustible" action="">
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel1">
-              Asignar Combustible al vehículo de placa: <strong>{vehiculo?.placa}</strong>
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              />
-            </div>
-            <div className="modal-body">
-            <div className="row g-2">
-                <div className="col mb-0">
-                  <label htmlFor="nombre" className="form-label">
-                    Chofer
-                  </label>
-                    <input
-                     value={choferActual}
-                     onChange={(e) => setChoferActual(e.target.value)}
-                    type="text"
-                    id="nombre"
-                    className="form-control"
-                    placeholder="Ingrese el chofer"
-                  />
-                </div>
-                <div className="col mb-0">
-                  <label htmlFor="correo" className="form-label">
-                    Fecha
-                  </label>
-                  <input 
-                    type="date" 
-                    id="correo" 
-                    className="form-control"
-                    value={fechaAsignacion}
-                    min={new Date().toISOString().split('T')[0]} 
-                    onChange={(e) => setFechaAsignacion(e.target.value)}
-                    placeholder="Ingrese fecha"
-                  />
-
-                </div>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel1">
+                  Asignar Combustible al vehículo de placa: <strong>{vehiculo?.placa}</strong>
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                />
               </div>
-              <div className="row g-2">
-              <div className="col mb-2">
-                <label htmlFor="rol" className="form-label">
-                Kilometraje inicial
-                  </label>
-                  <input 
-                    type="number" 
-                    id="correo" 
-                    className="form-control"
-                    value={kilometrajeInicial}
-                    min={0} 
-                    onChange={(e) => setKilometrajeInicial(e.target.value)}
-                    placeholder="Kilometraje"
-                  />
-                </div>
-                <div className="col mb-2">
-                <label htmlFor="estado" className="form-label">
-                Kilometraje Final
-                  </label>
-                  <input 
-                    type="number" 
-                    id="correo" 
-                    className="form-control"
-                    value={kilometrajeFinal}
-                    min={0} 
-                    onChange={(e) => setKilometrajeFinal(e.target.value)}
-                    placeholder="Kilometraje"
-                  />
-                </div>
+              <div className="modal-body">
+                <div className="row g-2">
+                  <div className="col mb-0">
+                    <label htmlFor="nombre" className="form-label">
+                      Chofer
+                    </label>
+                    <input
+                      value={choferActual}
+                      onChange={(e) => setChoferActual(e.target.value)}
+                      type="text"
+                      id="nombre"
+                      className="form-control"
+                      placeholder="Ingrese el chofer"
+                    />
+                  </div>
+                  <div className="col mb-0">
+                    <label htmlFor="correo" className="form-label">
+                      Fecha
+                    </label>
+                    <input
+                      type="date"
+                      id="correo"
+                      className="form-control"
+                      value={fechaAsignacion}
+                      min={new Date().toISOString().split('T')[0]}
+                      onChange={(e) => setFechaAsignacion(e.target.value)}
+                      placeholder="Ingrese fecha"
+                    />
+
+                  </div>
                 </div>
                 <div className="row g-2">
-              <div className="col mb-2">
-                <label htmlFor="rol" className="form-label">
-                Cupón desde
-                  </label>
-                  <input 
-                    type="number" 
-                    id="correo" 
-                    className="form-control"
-                    value={cuponDesde}
-                    min={0} 
-                    onChange={(e) => setCuponDesde(e.target.value)}
-                    placeholder="# cupon hasta"
-                  />
+                  <div className="col mb-2">
+                    <label htmlFor="rol" className="form-label">
+                      Kilometraje inicial
+                    </label>
+                    <input
+                      type="number"
+                      id="correo"
+                      className="form-control"
+                      value={kilometrajeInicial}
+                      min={0}
+                      onChange={(e) => setKilometrajeInicial(e.target.value)}
+                      placeholder="Kilometraje"
+                    />
+                  </div>
+                  <div className="col mb-2">
+                    <label htmlFor="estado" className="form-label">
+                      Kilometraje Final
+                    </label>
+                    <input
+                      type="number"
+                      id="correo"
+                      className="form-control"
+                      value={kilometrajeFinal}
+                      min={0}
+                      onChange={(e) => setKilometrajeFinal(e.target.value)}
+                      placeholder="Kilometraje"
+                    />
+                  </div>
                 </div>
-                <div className="col mb-2">
-                <label htmlFor="estado" className="form-label">
-                Cupón hasta
-                  </label>
-                  <input 
-                    type="number" 
-                    id="correo" 
-                    className="form-control"
-                    value={cuponHasta}
-                    min={0} 
-                    onChange={(e) => setCuponHasta(e.target.value)}
-                    placeholder="# cupon hasta"
-                  />
+                <div className="row g-2">
+                  <div className="col mb-2">
+                    <label htmlFor="rol" className="form-label">
+                      Cupón desde
+                    </label>
+                    <input
+                      type="number"
+                      id="correo"
+                      className="form-control"
+                      value={cuponDesde}
+                      min={0}
+                      onChange={(e) => setCuponDesde(e.target.value)}
+                      placeholder="# cupon hasta"
+                    />
+                  </div>
+                  <div className="col mb-2">
+                    <label htmlFor="estado" className="form-label">
+                      Cupón hasta
+                    </label>
+                    <input
+                      type="number"
+                      id="correo"
+                      className="form-control"
+                      value={cuponHasta}
+                      min={0}
+                      onChange={(e) => setCuponHasta(e.target.value)}
+                      placeholder="# cupon hasta"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="row g-2">
-                <div className="col mb-0">
-                  <label htmlFor="contrasena" className="form-label">
-                  Saldo
-                  </label>
-                  <input
-                     value={saldo}
-                     onChange={(e) => setSaldo(e.target.value)}
-                    type="number"
-                    id="contrasena"
-                    className="form-control"
-                    placeholder="Ingrese un saldo"
-                  />
-                </div>
-                <div className="col mb-0">
-                  <label htmlFor="contrasena2" className="form-label">
-                    Estado
-                  </label>
-                  <select id="rol" className="form-select"
+                <div className="row g-2">
+                  <div className="col mb-0">
+                    <label htmlFor="contrasena" className="form-label">
+                      Saldo
+                    </label>
+                    <input
+                      value={saldo}
+                      onChange={(e) => setSaldo(e.target.value)}
+                      type="number"
+                      id="contrasena"
+                      className="form-control"
+                      placeholder="Ingrese un saldo"
+                    />
+                  </div>
+                  <div className="col mb-0">
+                    <label htmlFor="contrasena2" className="form-label">
+                      Estado
+                    </label>
+                    <select id="rol" className="form-select"
                       value={estadoCupon}
                       onChange={(e) => setEstadoCupon(e.target.value)}
                     >
@@ -349,73 +349,73 @@ const VehiculoList = ({ user,vehiculoList,setMensaje, getVehiculos,vehiculo,setV
                       <option>ANULADO</option>
 
                     </select>
+                  </div>
                 </div>
-                </div>
-                
+
                 <div className="form-floating form-floating-outline mb-4 mt-3">
-                          <textarea
-                            id="basic-default-message"
-                            className="form-control"
-                            placeholder="Detalles adicionales"
-                            style={{ height: 100 }}
-                            defaultValue={""}
-                            value={observacionCupon}
-                            maxLength={255}
-                            onChange={(e) => setObservacionCupon(e.target.value)}
-                          />
-                          <label htmlFor="basic-default-message">
-                            Observaciones
-                          </label>
+                  <textarea
+                    id="basic-default-message"
+                    className="form-control"
+                    placeholder="Detalles adicionales"
+                    style={{ height: 100 }}
+                    defaultValue={""}
+                    value={observacionCupon}
+                    maxLength={255}
+                    onChange={(e) => setObservacionCupon(e.target.value)}
+                  />
+                  <label htmlFor="basic-default-message">
+                    Observaciones
+                  </label>
                 </div>
                 <div class="form-floating form-floating-outline mb-4">
-                          <input class="form-control" type="file" id="formFile" accept="application/pdf"
-                          onChange={handleFileChange}
-                          />
-                          <label for="exampleFormControlSelect1">
-                            PDF
-                          </label>
-                          {pdf && <embed className="mt-3" src={`data:application/pdf;base64,${pdf}`} width='100%'  />}
-                        </div>
-              <div className="row mt-3">
-                <div className="col mb-0">
+                  <input class="form-control" type="file" id="formFile" accept="application/pdf"
+                    onChange={handleFileChange}
+                  />
+                  <label for="exampleFormControlSelect1">
+                    PDF
+                  </label>
+                  {pdf && <embed className="mt-3" src={`data:application/pdf;base64,${pdf}`} width='100%' />}
+                </div>
+                <div className="row mt-3">
+                  <div className="col mb-0">
                     <p className="text-center">
-                    <button
-                          type="button"
-                          className="btn btn-primary waves-effect waves-light"
-                          onClick={save}
-                          disabled={loading}
-                        >
-                          <i class="menu-icon tf-icons mdi mdi-content-save"></i>
-                          Guardar
-                        </button>
-                  {error &&
-                  <div className="alert alert-danger alert-dismissible" role="alert">
+                      <button
+                        type="button"
+                        className="btn btn-primary waves-effect waves-light"
+                        onClick={save}
+                        disabled={loading}
+                      >
+                        <i class="menu-icon tf-icons mdi mdi-content-save"></i>
+                        Guardar
+                      </button>
+                      {error &&
+                        <div className="alert alert-danger alert-dismissible" role="alert">
                           {error}
-                          
-                  <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                  }
 
-              </p>
-                </div>
-                </div>
-            </div>
-            <div className="modal-footer">
-              <button
-                id="cerrarModal"
-                type="button"
-                className="btn btn-outline-secondary"
-                data-bs-dismiss="modal"
-              >
-                Cerrar
-              </button>
-             
+                          <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                      }
 
-              
-              
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  id="cerrarModal"
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cerrar
+                </button>
+
+
+
+
+              </div>
             </div>
           </div>
-        </div>
         </form>
       </div>
     </div>

@@ -1,5 +1,8 @@
+import Unidad from './unidad.js'
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
+import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+
 
 export default class Combustible extends BaseModel {
   static table = 'combustible'
@@ -30,7 +33,25 @@ export default class Combustible extends BaseModel {
   
   @column()
   declare denominacion: number
-  
+
+  @column()
+  declare unidad: string 
+
+  @column()
+  declare saldo_inicio: number
+
+  @column()
+  declare saldo_final: number
+
+  @column()
+  declare galones: number
+
+  @column()
+  declare consumo: number
+
+  @column()
+  declare rendimiento: number
+
   @column()
   declare estado_cupon: string
   

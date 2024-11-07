@@ -1,5 +1,3 @@
-
-import Person from '#models/person'
 import User from '#models/user'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -46,7 +44,82 @@ export default class UsersController {
   /**
    * Handle form submission for the edit action
    */
-  /*
+  async update({ params, request,response }: HttpContext) {
+    const user = await User.findOrFail(params.id);
+    if (user) {
+      const data = request.only(['nombre', 'email', 'password','estado', 'rol_id' ,'foto']);
+      const dataPersona = request.only(['dpi']);
+      
+      user.dpi = dataPersona.dpi
+      user.nombre = data.nombre
+      user.email = data.email
+      user.password = data.password
+      user.estado = data.estado
+      user.foto = data.foto
+      user.rol_id = data.rol_id
+      user.save()
+      return response.json(user);
+    } else {
+      return response.badRequest({ message: "No existe un usuario"});
+    }
+  }
+
+  /**
+   * Delete record
+   */
+  async destroy({ params,response }: HttpContext) {
+    const user = await User.findOrFail(params.id);
+    if (user) {
+      user.delete();
+      return response.json({message:"Usuario eliminado!"});
+    } else {
+      return response.badRequest({ message: "No existe un usuario"});
+    }
+  }
+}
+
+
+
+
+/*
+import Person from '#models/person'
+import User from '#models/user'
+import type { HttpContext } from '@adonisjs/core/http'
+
+export default class UsersController {
+ 
+  async index({ response }: HttpContext) {
+    try {
+      const users = await User.query()
+        .preload('rol') // Cargar la relación 'rol'
+        .exec()
+        
+
+      return response.ok(users)
+    } catch (error) {
+      console.error(error)
+      return response.badRequest({ message: 'Error al obtener usuarios con roles.' })
+    }
+  }
+
+  async store({ request,response }: HttpContext) {
+    const data = request.all();
+    const existe = await User.query().where('email', data.email).first();
+    if (!existe) {
+      const user = await User.create(data);
+      return response.created(user);
+    } else {
+      return response.badRequest({ message: "Ya existe un usuario con correo:" + data.email });
+    }
+  }
+
+  
+  async show({ params,response }: HttpContext) {
+    const user = await User.findOrFail(params.id);
+    return response.json(user);
+  }
+
+  
   async update({ params, request,response }: HttpContext) {
     const user = await User.findOrFail(params.id);
 
@@ -67,8 +140,27 @@ export default class UsersController {
       return response.badRequest({ message: "No existe un usuario"});
     }
   }
-    */
+    
 
+
+  async update({ params, request,response }: HttpContext) {
+    const user = await User.findOrFail(params.id);
+    if (user) {
+      const data = request.only(['nombre', 'email', 'password','estado', 'rol_id']);
+      user.nombre = data.nombre
+      user.email = data.email
+      user.password = data.password
+      user.estado = data.estado
+      user.rol_id = data.rol_id
+      user.save()
+      return response.json(user);
+    } else {
+      return response.badRequest({ message: "No existe un usuario"});
+    }
+  }
+
+
+  
   async update({ params, request, response }: HttpContext) {
     try {
       // Buscar al usuario y a la persona relacionada
@@ -102,10 +194,7 @@ export default class UsersController {
       return response.badRequest({ message: "Error al actualizar el usuario y la persona." });
     }
   }
-
-  /**
-   * Delete record
-   */
+    
   async destroy({ params,response }: HttpContext) {
     const user = await User.findOrFail(params.id);
     if (user) {
@@ -117,7 +206,7 @@ export default class UsersController {
   }
 }
 
-
+*/
 
 
 

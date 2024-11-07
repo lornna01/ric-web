@@ -3,16 +3,13 @@ import axios from "axios";
 import { API_URL_AUTH } from "../services/auth/authConstants";
 import toast from "react-hot-toast";
 
-
-
-const DepartamentoList = ({ user, departamentoList, setMensaje, getDepartamentos, deoartamento, setDepartamento, setEditing, loading, setLoading, error, setError }) => {
-  const [departamentos, setDepartamentos] = useState([]);
+const UnidadList = ({ user, unidadList, setMensaje, getUnidades, deoartamento, setUnidad, setEditing, loading, setLoading, error, setError }) => {
+  const [unidades, setUnidades] = useState([]);
 
 
 
   const [nombre, setNombre] = useState();
-  const [descripcion, setDescripcion] = useState();
-  const [estado, setEstado] = useState();
+
 
   const axiosInstance = axios.create({
     baseURL: `${import.meta.env.VITE_API_URL}`, // URL base de tu API
@@ -23,12 +20,12 @@ const DepartamentoList = ({ user, departamentoList, setMensaje, getDepartamentos
   });
 
 
-  const deleteDepartamento = async (id) => {
+  const deleteUnidad = async (id) => {
     setLoading(true);
 
     try {
-      const response = await axiosInstance.delete(`${import.meta.env.VITE_API_URL}/departamentos/${id}`);
-      getDepartamentos();
+      const response = await axiosInstance.delete(`${import.meta.env.VITE_API_URL}/unidades/${id}`);
+      getUnidades();
       setLoading(false);
     } catch (error) {
       console.error("Login failed:", error);
@@ -41,14 +38,18 @@ const DepartamentoList = ({ user, departamentoList, setMensaje, getDepartamentos
     }
   };
 
-  const deleteConfirm = async (departamento) => {
-    if (confirm("Realmente quiere eliminar a " + departamento.nombre + "??")) {
-      await deleteDepartamento(departamento.id);
+
+
+
+
+  const deleteConfirm = async (unidad) => {
+    if (confirm("Realmente quiere eliminar a " + unidad.nombre + "??")) {
+      await deleteUnidad(unidad.id);
       toast.success("Registro Eliminado!!")
       setTimeout(() => {
         window.location.reload()
       }, 1500);
-      getDepartamentos();
+      getUnidades();
     }
   }
 
@@ -57,45 +58,12 @@ const DepartamentoList = ({ user, departamentoList, setMensaje, getDepartamentos
 
 
 
-  //Última modificacion 04/10/2024 10:30 am
-  const activarInactivar = async (departamento) => {
-    if (departamento?.nombre === "Petén") {
-      console.warn("No se puede inactivar el depto.");
-      toast.error("El depto. no puede ser inactivado.");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const nuevoEstado = departamento.estado === "INACTIVO" ? "ACTIVO" : "INACTIVO";
-      const departamentoActualizado = { ...departamento, estado: nuevoEstado };
-
-      const response = await axiosInstance.put(`/departamentos/${departamento.id}`, departamentoActualizado);
-
-      if (response.status === 200) {
-        console.log(departamentoActualizado, response.data);
-        toast.success(`Departamento ${nuevoEstado.toLowerCase()} con éxito!!`);
-        getDepartamentos();  // Actualizar la lista de departamentos
-      } else {
-        toast.error("No se pudo actualizar el departamento. Intenta nuevamente.");
-      }
-    } catch (error) {
-      console.error("Error en la operación:", error);
-      toast.error(`Error: ${error.response?.data?.message || 'Error inesperado'}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
-
 
 
 
 
   useEffect(() => {
-    getDepartamentos();
+    getUnidades();
   }, []);
 
 
@@ -118,15 +86,13 @@ const DepartamentoList = ({ user, departamentoList, setMensaje, getDepartamentos
             <tr>
               <th className="text-truncate">Nombre</th>
 
-              <th className="text-truncate">Estado</th>
-
               <th className="text-truncate">
                 Acciones
               </th>
             </tr>
           </thead>
           <tbody>
-            {departamentoList.map((item) => {
+            {unidadList.map((item) => {
               return (
                 <tr key={item.id}>
                   <td>
@@ -137,9 +103,6 @@ const DepartamentoList = ({ user, departamentoList, setMensaje, getDepartamentos
                     </div>
                   </td>
 
-                  <td>
-                    {item.estado}
-                  </td>
 
                   <td>
                     <button
@@ -147,7 +110,7 @@ const DepartamentoList = ({ user, departamentoList, setMensaje, getDepartamentos
                       className={`btn rounded-pill m-1 ${item.nombre === 'Petén' ? 'btn-secondary' : 'btn-info'}`}
                       onClick={() => {
                         if (item.nombre !== 'Petén') {
-                          setDepartamento(item);
+                          setUnidad(item);
                           setEditing(true);
                         }
                       }}
@@ -157,16 +120,6 @@ const DepartamentoList = ({ user, departamentoList, setMensaje, getDepartamentos
                       <i className="bx bx-edit"></i>
                     </button>
 
-                    <button
-                      type="button"
-                      onClick={() => activarInactivar(item)}  // Llamada a la función activarInactivar
-                      className={`btn rounded-pill btn-${item.estado === "ACTIVO" ? "warning" : "success"}`}
-                      disabled={item.nombre === "Petén"}  // Desactivar el botón para el Petén 
-                      title={item.nombre === "Petén" ? "El depto. no puede ser inactivado" : (item.estado === "ACTIVO" ? "Inactivar" : "Activar")}
-                      style={{ cursor: item.nombre === 'Petén' ? 'not-allowed' : 'pointer' }}  // Cambiar el cursor cuando está desactivado
-                    >
-                      <i className={`bx bx-${item.estado === "ACTIVO" ? "block" : "check"}`} />
-                    </button>
 
 
                     <button
@@ -208,4 +161,4 @@ const DepartamentoList = ({ user, departamentoList, setMensaje, getDepartamentos
   );
 };
 
-export default DepartamentoList;
+export default UnidadList;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "./../providers/AuthContextProvider";
+import { useAuth } from "../providers/AuthContextProvider";
 import axios from "axios";
-import { API_URL_AUTH } from "./../services/auth/authConstants";
+import { API_URL_AUTH } from "../services/auth/authConstants";
 import "./Home.css";
 import UserList from "../components/UserList";
 import MenuLateral from "../components/MenuLateral";
@@ -13,19 +13,19 @@ import toast from "react-hot-toast";
 
 import { useNavigate } from "react-router-dom";
 
-
 const Home = () => {
   const { logout } = useAuth();
   const { user } = useAuth();
   const navigate = useNavigate();
 
 
+
+
   const [userList, setUserList] = useState([]);
 
   const [expedienteList, setExpedienteList] = useState([]);
-
-  const [incompletoList, setIncompletoList] = useState([]);
-  const [sinActaList, setSinActaList] = useState([]);
+  const [borradorList, setBorradorList] = useState([]);
+  const [enRevisionList, setEnRevisionList] = useState([]);
   const [completosList, setCompletosList] = useState([]);
 
   const [persona, setPersona] = useState([]);
@@ -79,11 +79,11 @@ const Home = () => {
       );
       await setExpedienteList(response.data);
       const comple = await response.data.filter(ex => ex.estado.nombre === 'COMPLETO');
-      const acta = await response.data.filter(ex => ex.estado.nombre === 'SIN ACTA F-28');
-      const incomple = await response.data.filter(ex => ex.estado.nombre === 'INCOMPLETO');
+      const revi = await response.data.filter(ex => ex.estado.nombre === 'EN REVISIÓN');
+      const borra = await response.data.filter(ex => ex.estado.nombre === 'BORRADOR');
       await setCompletosList(comple)
-      await setSinActaList(acta)
-      await setIncompletoList(incomple)
+      await setEnRevisionList(revi)
+      await setBorradorList(borra)
 
       //
       setLoading(false);
@@ -139,14 +139,13 @@ const Home = () => {
     }
   };
 
-
-  const updateUser = async (user) => {
+  /*const updateUser = async (user, dpi) => {
     setLoading(true);
 
     let data = {
-      dpi: user.dpi,
       nombre: user.nombre,
       email: user.email,
+      dpi: user.dpi,
       rol_id: user.id_rol,
       estado: user.estado,
       foto: user.foto,
@@ -174,6 +173,35 @@ const Home = () => {
       console.log(error);
     }
   };
+  */
+
+
+  const update = async () => {
+    if (contrasena != contrasena2) {
+      setError("Contraseñas no coinciden")
+      return;
+    } else if(contrasena?.length < 3 && contrasena!="") {
+      setError("La contraseña no es suficientemente segura");
+    return;
+    }
+  
+  const data = {
+    
+    email:correo,
+    id_rol: idRol,
+    nombre,
+    estado,
+    foto
+  }
+  if (contrasena) {
+    data.password = contrasena
+  }
+  await update(data,dpi);
+  //setTimeout(() => {
+   // window.location.reload()
+  //}, 1500);
+  
+}
 
   const savePersona = async (user) => {
     setLoading(true);
@@ -230,7 +258,6 @@ const Home = () => {
   }, []);
 
 
-
   useEffect(() => {
     if (user.user.rol.nombre === "GERENTE") {
       navigate("/dashboard");
@@ -245,11 +272,6 @@ const Home = () => {
   }, [user, navigate]);
 
 
-  useEffect(() => {
-    if (user.user.rol.nombre === "TECNICO-BODEGA") {
-      navigate("/dashboard");
-    }
-  }, [user, navigate]);
 
 
 
@@ -273,8 +295,7 @@ const Home = () => {
                 <div className="row my-4 text-center">
                   {/* Deposit / Withdraw */}
                   {/* Data Tables */}
-                  {["ADMINISTRADOR", "TECNICO-INFORMATICA"].includes(user.user.rol.nombre) && (
-
+                  {user.user.rol.nombre == "ADMINISTRADOR" && (
                     <div className="col-12">
                       {!loadingUsers ? <UserList
                         persona={persona}
@@ -284,7 +305,7 @@ const Home = () => {
                         userList={userList}
                         savePersona={savePersona}
                         saveUser={saveUser}
-                        updateUser={updateUser}
+                        update={update}
                         error={error}
                         setError={setError}
                         loading={loading}
@@ -303,7 +324,7 @@ const Home = () => {
                 <div className="row my-4 text-center">
                   {/* Deposit / Withdraw */}
                   {/* Data Tables */}
-                  {["ADMINISTRADOR", "TECNICO-ARCHIVO"].includes(user.user.rol.nombre) && (
+                  {user.user.rol.nombre == "TECNICO-ARCHIVO" && (
                     <div className="col-12">
                       <ExpedienteList />
                     </div>
@@ -312,101 +333,133 @@ const Home = () => {
 
                   {/*/ Data Tables */}
 
-
-                  {["ADMINISTRADOR", "TECNICO-ARCHIVO"].includes(user.user.rol.nombre) && (
-
+                  {user.user.rol.nombre == "TECNICO-ARCHIVO" && (
+                    
                     <div className="row gy-4">
-                      {/* Congratulations card */}
-                      <div className="col-md-12 col-lg-4">
-                        <div className="card">
-                          <div className="card-body">
-                            <h4 className="card-title mb-1">
-                              Total expedientes
-                            </h4>
-                            <h4 className="text-primary mb-1">{(expedienteList.length).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</h4>
-                            <Link
-                              to="/expedientes/nuevo"
-                              className="btn btn-sm btn-primary waves-effect waves-light"
-                            >
-                              Registrar uno nuevo
-                            </Link>
-                          </div>
+                    {/* Congratulations card */}
+                    <div className="col-md-12 col-lg-4">
+                      <div className="card">
+                        <div className="card-body">
+                          <h4 className="card-title mb-1">
+                            Total expedientes 🚀!
+                          </h4>
+                          <h4 className="text-primary mb-1">{(expedienteList.length).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</h4>
+                          <Link
+                            to="/expedientes/nuevo"
+                            className="btn btn-sm btn-primary waves-effect waves-light"
+                          >
+                            Registrar uno nuevo
+                          </Link>
                         </div>
                       </div>
-                      {/*/ Congratulations card */}
-                      {/* Transactions */}
-                      <div className="col-lg-8">
-                        <div className="card">
-                          <div className="card-header">
-                            <div className="d-flex align-items-center justify-content-between">
-                              <h5 className="card-title m-0 me-2">
-                                Registro por estado
-                              </h5>
-
-                            </div>
-
-                          </div>
-                          <div className="card-body">
-                            <div className="row">
-                              <div className="col-md-4 col-6">
-                                <div className="d-flex align-items-center">
-                                  <div className="avatar">
-                                    <div className="avatar-initial bg-secondary rounded shadow">
-                                      <i className="mdi mdi-trash-can mdi-24px" />
-                                    </div>
-                                  </div>
-                                  <div className="ms-3">
-                                    <div className="small mb-1">INCOMPLETOS</div>
-                                    <h5 className="mb-0">{(incompletoList.length).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</h5>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-md-4 col-6">
-                                <div className="d-flex align-items-center">
-                                  <div className="avatar">
-                                    <div className="avatar-initial bg-info rounded shadow">
-                                      <i className="mdi mdi-eye-outline mdi-24px" />
-                                    </div>
-                                  </div>
-                                  <div className="ms-3">
-                                    <div className="small mb-1">SIN ACTA F-28</div>
-                                    <h5 className="mb-0">{(sinActaList.length).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</h5>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-md-4 col-6">
-                                <div className="d-flex align-items-center">
-                                  <div className="avatar">
-                                    <div className="avatar-initial bg-success rounded shadow">
-                                      <i className="mdi mdi-check-all mdi-24px" />
-                                    </div>
-                                  </div>
-                                  <div className="ms-3">
-                                    <div className="small mb-1">Completos</div>
-                                    <h5 className="mb-0">{(completosList.length).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</h5>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      {/*/ Transactions */}
-
-
-
-
                     </div>
+                    {/*/ Congratulations card */}
+                    {/* Transactions */}
+                    <div className="col-lg-8">
+                      <div className="card">
+                        <div className="card-header">
+                          <div className="d-flex align-items-center justify-content-between">
+                            <h5 className="card-title m-0 me-2">
+                              Registro por estado
+                            </h5>
+
+                          </div>
+
+                        </div>
+                        <div className="card-body">
+                          <div className="row">
+                            <div className="col-md-4 col-6">
+                              <div className="d-flex align-items-center">
+                                <div className="avatar">
+                                  <div className="avatar-initial bg-secondary rounded shadow">
+                                    <i className="mdi mdi-trash-can mdi-24px" />
+                                  </div>
+                                </div>
+                                <div className="ms-3">
+                                  <div className="small mb-1">BORRADORES</div>
+                                  <h5 className="mb-0">{(borradorList.length).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</h5>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="col-md-4 col-6">
+                              <div className="d-flex align-items-center">
+                                <div className="avatar">
+                                  <div className="avatar-initial bg-info rounded shadow">
+                                    <i className="mdi mdi-eye-outline mdi-24px" />
+                                  </div>
+                                </div>
+                                <div className="ms-3">
+                                  <div className="small mb-1">En Revisión</div>
+                                  <h5 className="mb-0">{(enRevisionList.length).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</h5>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="col-md-4 col-6">
+                              <div className="d-flex align-items-center">
+                                <div className="avatar">
+                                  <div className="avatar-initial bg-success rounded shadow">
+                                    <i className="mdi mdi-check-all mdi-24px" />
+                                  </div>
+                                </div>
+                                <div className="ms-3">
+                                  <div className="small mb-1">Completos</div>
+                                  <h5 className="mb-0">{(completosList.length).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</h5>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {/*/ Transactions */}
+
+
+
+
+                  </div>
 
                   )}
-
+                  
 
                 </div>
 
 
 
 
-                
+
+
+
+
+
+
+                <div className="row my-4 text-center">
+                  {/* Deposit / Withdraw */}
+                  {/* Data Tables */}
+                  {user.user.rol.nombre == "ASITENTE-ADMINISTRATIVO" && (
+                    <div className="row gy-4">ADMINISTRACION</div>
+                  )}
+
+
+                  {/*/ Data Tables */}
+                </div>
+
+
+
+                <div className="row my-4 text-center">
+                  {/* Deposit / Withdraw */}
+                  {/* Data Tables */}
+                  {user.user.rol.nombre == "ASITENTE-ADMINISTRATIVO" && (
+                    <div className="row gy-4">ADMINISTRACION</div>
+                  )}
+
+
+                  {/*/ Data Tables */}
+                </div>
+
+
+
+
+
 
 
 

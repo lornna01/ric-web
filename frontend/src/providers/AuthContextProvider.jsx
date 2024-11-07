@@ -1,5 +1,3 @@
-
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 // Crear el contexto de autenticación
@@ -28,7 +26,6 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  
   const logout = () => {
     setAuthData({
       isAuthenticated: false,
@@ -36,15 +33,6 @@ export const AuthProvider = ({ children }) => {
       accessToken: null,
     });
   };
-  
-/*
-  const logout = () => {
-    // Eliminar token del localStorage
-    localStorage.removeItem('token');
-    // Restablecer el estado del usuario
-    setUser(null);
-    setIsAuthenticated(false);
-  };*/
 
   return (
     <AuthContext.Provider value={{ ...authData, login, logout }}>

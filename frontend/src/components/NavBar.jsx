@@ -75,11 +75,11 @@ const NavBar = () => {
         <div className="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
           {/* Search */}
           <div className="navbar-nav align-items-center">
-                  <div className="nav-item d-flex align-items-center">
-                  <i className="bx bx-box text-success me-1" />{" "}
-                    {user.user.rol.nombre}
-                  </div>
-                </div>
+            <div className="nav-item d-flex align-items-center">
+              <i className="bx bx-box text-success me-1" />{" "}
+              {user.user.rol.nombre}
+            </div>
+          </div>
           <ul className="navbar-nav flex-row align-items-center ms-auto">
             <li className="nav-item lh-1 me-3">
               <span />
@@ -94,31 +94,31 @@ const NavBar = () => {
                   )}
                 </div>
               </a>
-              
+
               <ul className="dropdown-menu dropdown-menu-end mt-3 py-2">
-  <div className="navbar-nav align-items-center">
-    <div className="nav-item d-flex align-items-center">{" ---> "}
-      <i className="mdi mdi-human text-success me-1" />{"   Hola: "}
-      {user.user.nombre}
-    </div>
-  </div>
-  {/* Condición para mostrar notificaciones solo si el rol es TECNICO-ARCHIVO */}
-  {user.user.rol.nombre === 'TECNICO-ARCHIVO' && (
-    <li>
-      <Link className="dropdown-item waves-effect" to={'/notificaciones'}>
-        <i className="mdi mdi-power me-1 mdi-20px" />
-        <span className="align-middle">Notificaciones <span className="badge bg-label-warning rounded-pill">{notificacionesList.length}</span></span>
-      </Link>
-    </li>
-  )}
-  
-  <li>
-    <a className="dropdown-item waves-effect" href="#" onClick={logout}>
-      <i className="mdi mdi-power me-1 mdi-20px" />
-      <span className="align-middle">Cerrar sesión</span>
-    </a>
-  </li>
-</ul>
+                <div className="navbar-nav align-items-center">
+                  <div className="nav-item d-flex align-items-center">{" ---> "}
+                    <i className="mdi mdi-human text-success me-1" />{"   Hola: "}
+                    {user.user.nombre}
+                  </div>
+                </div>
+                {/* Condición para mostrar notificaciones solo si el rol es TECNICO-ARCHIVO */}
+                {user.user.rol.nombre === 'TECNICO-ARCHIVO' && (
+                  <li>
+                    <Link className="dropdown-item waves-effect" to={'/notificaciones'}>
+                      <i className="mdi mdi-power me-1 mdi-20px" />
+                      <span className="align-middle">Notificaciones <span className="badge bg-label-warning rounded-pill">{notificacionesList.length}</span></span>
+                    </Link>
+                  </li>
+                )}
+
+                <li>
+                  <a className="dropdown-item waves-effect" href="#" onClick={logout}>
+                    <i className="mdi mdi-power me-1 mdi-20px" />
+                    <span className="align-middle">Cerrar sesión</span>
+                  </a>
+                </li>
+              </ul>
 
             </li>
           </ul>

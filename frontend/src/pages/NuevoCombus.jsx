@@ -255,7 +255,7 @@ const NuevoCombustible = () => {
     setLoading(true);
 
     let data = {
-    fecha: combustible.fecha,
+      fecha: combustible.fecha,
     placa: vehiculo?.placa,
     kilometraje_inicial: combustible.kilometraje_inicial,
     kilometraje_final: combustible.kilometraje_final,
@@ -299,124 +299,6 @@ const NuevoCombustible = () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-  const deleteVehiculo = async (vehiculo) => {
-    setMensaje("");
-    setError("");
-
-    setLoading(true);
-
-    try {
-      const response = await axiosInstance.delete(`${import.meta.env.VITE_API_URL}/vehiculos/${vehiculo.id}`);
-      
-      if (response.status === 200) {
-        toast.success("Vehículo eliminado con éxito!!")
-        //setMensaje("Vehículo creado con éxito!!");
-        console.log(response.data)
-        getVehiculos()
-       
-      }
-      setLoading(false);
-      setError();
-    } catch (error) {
-      setEditing(false);
-      if (error.response.status === 400) {
-        setError(error.response.data.message);
-        toast.error(error.response.data.message)
-        setPropietario('')
-        setArchivo('')
-        setPlaca('')
-        setModelo('')
-        setChofer('')
-        setComentarios('')
-      }
-      if (error.status >= 400 && error.response.status < 500) {
-        setError("Error inesperado");
-      }
-      if (error.status >= 500) {
-        setError("Ya existe");
-      }
-      //setError(error.message);
-      setLoading(false);
-      console.log(error);
-    }
-
-    if (!error) {
-      const closeButtonElement = document.getElementById("cerrarModal");
-      if (closeButtonElement) {
-        closeButtonElement.click();
-      }
-    }
-  };
-
-  const deleteCombustible = async (combustib) => {
-    setMensaje("");
-    setError("");
-
-    setLoading(true);
-
-    try {
-      const response = await axiosInstance.delete(`${import.meta.env.VITE_API_URL}/combustible/${combustib.id}`);
-      
-      if (response.status === 200) {
-        toast.success("Item eliminado con éxito!!")
-        window.location.reload();
-        //setMensaje("Vehículo creado con éxito!!");
-        console.log(response.data)
-        getVehiculos()
-       
-      }
-      setLoading(false);
-      setError();
-    } catch (error) {
-      setEditing(false);
-      if (error.response.status === 400) {
-        setError(error.response.data.message);
-        toast.error(error.response.data.message)
-        setPropietario('')
-        setArchivo('')
-        setPlaca('')
-        setModelo('')
-        setChofer('')
-        setComentarios('')
-      }
-      if (error.status >= 400 && error.response.status < 500) {
-        setError("Error inesperado");
-      }
-      if (error.status >= 500) {
-        setError("Ya existe");
-      }
-      //setError(error.message);
-      setLoading(false);
-      console.log(error);
-    }
-
-    if (!error) {
-      const closeButtonElement = document.getElementById("cerrarModal");
-      if (closeButtonElement) {
-        closeButtonElement.click();
-      }
-    }
-  };
-
-
-
-
-
-
-
-
-
-  
 
 
   useEffect(() => {
@@ -517,7 +399,7 @@ const NuevoCombustible = () => {
                         {false && <div class="form-floating form-floating-outline mb-4" >
                           <input
                             type="text"
-                            
+                            maxLength={60}
                             className="form-control"
                             id="titular"
                             placeholder="Juan Pablo Ramirez"
@@ -572,7 +454,7 @@ const NuevoCombustible = () => {
                             <input
                               disabled
                               type="text"
-                              
+                              maxLength={60}
                               className="form-control"
                               id="titular"
                               placeholder="Juan Pablo Ramirez"
@@ -652,7 +534,6 @@ const NuevoCombustible = () => {
                               error={error}
                               combustible={combustible}
                               updateCombustible={updateCombustible}
-                               deleteCombustible ={deleteCombustible}
                               setCombustible={setCombustible}
                               setEditing={setEditing}
                               user={user}

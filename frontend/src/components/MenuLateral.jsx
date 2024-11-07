@@ -67,7 +67,7 @@ const MenuLateral = ({ isCollapsed, onClose }) => {
           </li>
 
           {/* Sección Admin */}
-          {user.user.rol.nombre === "ADMINISTRADOR" && (
+          {["ADMINISTRADOR", "TECNICO-INFORMATICA"].includes(user.user.rol.nombre) && (
             <>
               <li className="menu-header fw-medium mt-4">
                 <span className="menu-header-text">ADMIN</span>
@@ -76,7 +76,7 @@ const MenuLateral = ({ isCollapsed, onClose }) => {
             </>
           )}
 
-          {user.user.rol.nombre === "TECNICO-ARCHIVO" && (
+          {["ADMINISTRADOR", "TECNICO-ARCHIVO"].includes(user.user.rol.nombre) && (
             <>
               {/* Sección de Archivo */}
               <li className="menu-header fw-medium mt-4">
@@ -91,9 +91,10 @@ const MenuLateral = ({ isCollapsed, onClose }) => {
 
               {isArchivoOpen && (
                 <ul className="submenu" style={{ maxHeight: '200px', overflowY: 'auto' }}>
-                  {renderMenuItem('/departamentos/nuevo', 'Departamentos', 'mdi mdi-map-marker-circle')}
-                  {renderMenuItem('/municipios/nuevo', 'Municipios', 'mdi mdi-ticket')}
                   {renderMenuItem('/expedientes/nuevo', 'Nuevo expediente', 'mdi mdi-file-outline')}
+                  {renderMenuItem('/departamentos/nuevo', 'Departamentos', 'mdi mdi-map-marker-circle')}
+                  {renderMenuItem('/municipios/nuevo', 'Municipios', 'mdi mdi-map-marker-alert-outline')}
+                  {renderMenuItem('/estadoExpedientes/nuevo', 'Nuevo estado de expediente', 'mdi mdi-check-all')}
                 </ul>
               )}
 
@@ -102,8 +103,7 @@ const MenuLateral = ({ isCollapsed, onClose }) => {
             </>
           )}
 
-
-          {user.user.rol.nombre === "ASISTENTE-ADMINISTRATIVO" && (
+          {["ADMINISTRADOR", "ASISTENTE-ADMINISTRATIVO", "TECNICO-BODEGA"].includes(user.user.rol.nombre) && (
             <>
               {/* Sección de Administración */}
               <li className="menu-header fw-medium mt-4">
@@ -111,86 +111,51 @@ const MenuLateral = ({ isCollapsed, onClose }) => {
               </li>
               {renderMenuItem('/vehiculos/nuevo', 'Vehículos', 'mdi mdi-car-outline')}
               {renderMenuItem('/combustible/nuevo', 'Combustible', 'mdi mdi-fire')}
+              
             </>
           )}
 
 
 
-          
-              {/* Reportes */}
-              <li className="menu-header fw-medium mt-4">
-                <span className="menu-header-text">REPORTES</span>
-              </li>
 
-              <li className={`menu-item ${isReportesOpen ? 'active' : ''}`}>
-                <a href="#" className="menu-link waves-effect" onClick={handleReportesClick}>
-                  <i className="menu-icon tf-icons mdi mdi-file-chart-outline" />
-                  <div data-i18n="Dashboards">Reportes</div>
-                </a>
-              </li>
-              
+          {/* Reportes */}
+          <li className="menu-header fw-medium mt-4">
+            <span className="menu-header-text">REPORTES</span>
+          </li>
 
-              {isReportesOpen && (
-                <ul className="submenu" style={{ maxHeight: '200px', overflowY: 'auto' }}>
-                  {(user.user.rol.nombre === "GERENTE" || user.user.rol.nombre === "TECNICO-ARCHIVO" || user.user.rol.nombre === "ASISTENTE-ADMINISTRATIVO") && (
-                    <>
-                      {renderMenuItem('/dashboard', 'Dashboard', 'mdi mdi-navigation')}
-                    </>
-                  )}
-
-                  {(user.user.rol.nombre === "GERENTE" || user.user.rol.nombre === "TECNICO-ARCHIVO") && (
-                    <>
-                      {renderMenuItem('/expedientes/ReporteExpediente', 'Reporte de expedientes', 'mdi mdi-file-document-multiple')}
-                    </>
-                  )}
-
-                  {(user.user.rol.nombre === "GERENTE" || user.user.rol.nombre === "ASISTENTE-ADMINISTRATIVO") && (
-                    <>
-                      {renderMenuItem('/combustible/reporteCombustible', 'Reporte de Combustible-Rendimiento', 'mdi mdi-file-document-multiple-outline')}
-                    </>
-                  )}
+          <li className={`menu-item ${isReportesOpen ? 'active' : ''}`}>
+            <a href="#" className="menu-link waves-effect" onClick={handleReportesClick}>
+              <i className="menu-icon tf-icons mdi mdi-file-chart-outline" />
+              <div data-i18n="Dashboards">Reportes</div>
+            </a>
+          </li>
 
 
-
-
-                </ul>
+          {isReportesOpen && (
+            <ul className="submenu" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+              {(user.user.rol.nombre === "ADMINISTRADOR" || user.user.rol.nombre === "GERENTE" || user.user.rol.nombre === "TECNICO-ARCHIVO" || user.user.rol.nombre === "ASISTENTE-ADMINISTRATIVO") && (
+                <>
+                  {renderMenuItem('/dashboard', 'Dashboard', 'mdi mdi-navigation')}
+                </>
               )}
-           
+
+              {(user.user.rol.nombre === "ADMINISTRADOR" || user.user.rol.nombre === "GERENTE" || user.user.rol.nombre === "TECNICO-ARCHIVO") && (
+                <>
+                  {renderMenuItem('/expedientes/ReporteExpediente', 'Reporte de expedientes', 'mdi mdi-file-document-multiple')}
+                </>
+              )}
+
+              {(user.user.rol.nombre === "ADMINISTRADOR" || user.user.rol.nombre === "GERENTE" || user.user.rol.nombre === "ASISTENTE-ADMINISTRATIVO" || user.user.rol.nombre === "TECNICO-BODEGA") && (
+                <>
+                  {renderMenuItem('/combustible/reporteCombustible', 'Reporte de Combustible-Rendimiento', 'mdi mdi-file-document-multiple-outline')}
+                </>
+              )}
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            </ul>
+          )}
 
 
         </ul>

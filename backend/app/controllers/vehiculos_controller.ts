@@ -36,7 +36,7 @@ export default class VehiculosController {
     if (existe) {
       return response.json(existe);
     } else {
-      return response.badRequest({ message: "No existe:" + params.placa });
+      return response.badRequest({ message: "No existe la placa: " + params.placa });
     }
   }
 

@@ -98,6 +98,18 @@ async store({ request, response }: HttpContext) {
   }
 
 
+  async destroy({ params,response }: HttpContext) {
+    const municipio = await Municipio.findOrFail(params.id);
+    if (municipio) {
+      municipio.delete();
+      return response.json({message:"Municipio eliminado!"});
+    } else {
+      return response.badRequest({ message: "No existe."});
+    }
+  }
+
+
+
   /*
   async index({ response,request }: HttpContext) {
     try {

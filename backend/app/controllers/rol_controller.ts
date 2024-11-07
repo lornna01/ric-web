@@ -15,9 +15,9 @@ export default class RolController {
     const existe = await Rol.query().where('nombre', data.nombre).first();
     if (!existe) {
       //const user = await Rol.create(data);
-      const departamento = await Rol.create(data);
+      const rol = await Rol.create(data);
       //return response.created(user);
-      return response.created(departamento);
+      return response.created(rol);
     } else {
       return response.badRequest({ message: "Ya existe un rol con el nombre: " + data.nombre });
     }
@@ -48,5 +48,18 @@ export default class RolController {
       return response.badRequest({ message: 'Error al obtener rolssss.' })
     }
   }
+
+
+  async destroy({ params,response }: HttpContext) {
+    const rol = await Rol.findOrFail(params.id);
+    if (rol) {
+      rol.delete();
+      return response.json({message:"Rol eliminado!"});
+    } else {
+      return response.badRequest({ message: "No existe un rol"});
+    }
+  }
+
+
 
 }

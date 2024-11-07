@@ -42,38 +42,41 @@ const ReporteExpediente = () => {
     const [fechaFin, setFechaFin] = useState("");
     const [departamentos, setDepartamentos] = useState([]);
     const [municipios, setMunicipios] = useState([]);
+    const [estadoExpedientes, setEstadoExpedientes] = useState([]);
     const [idDepartamento, setIdDepartamento] = useState(0);
     const [idMunicipio, setIdMunicipio] = useState(0);
+    const [idEstadoExpediente, setIdEstadoExpediente] = useState(0);
 
-// Función para buscar reportes
-const buscarReportes = async () => {
-    setMensaje("");
-    setError("");
-    setLoadingReportes(true);
+    // Función para buscar reportes
+    const buscarReportes = async () => {
+        setMensaje("");
+        setError("");
+        setLoadingReportes(true);
 
-    try {
-        const response = await axiosInstance.post(`/expedientes/reporteExpediente`, {
-            usuario_id: user?.user?.id,
-            fechaInicio,
-            fechaFin,
-            departamento_id: idDepartamento,
-            municipio_id: idMunicipio,
-        });
+        try {
+            const response = await axiosInstance.post(`/expedientes/reporteExpediente`, {
+                usuario_id: user?.user?.id,
+                fechaInicio,
+                fechaFin,
+                departamento_id: idDepartamento,
+                municipio_id: idMunicipio,
+                expediente_estado_id: idEstadoExpediente,
+            });
 
-        if (response.status === 200) {
-            setReporteList(response.data);
-            setMensaje("Reportes obtenidos con éxito.");
-        } else {
-            setError("No se encontraron reportes.");
+            if (response.status === 200) {
+                setReporteList(response.data);
+                setMensaje("Reportes obtenidos con éxito.");
+            } else {
+                setError("No se encontraron reportes.");
+            }
+        } catch (error) {
+            setError("Error al obtener los reportes!");
+            toast.error("Error al obtener los reportes!");
+            console.error("Error al obtener reportes:", error);
+        } finally {
+            setLoadingReportes(false);
         }
-    } catch (error) {
-        setError("Error al obtener los reportes!");
-        toast.error("Error al obtener los reportes!");
-        console.error("Error al obtener reportes:", error);
-    } finally {
-        setLoadingReportes(false);
-    }
-};
+    };
 
 
     const handleBuscar = () => {
@@ -108,64 +111,91 @@ const buscarReportes = async () => {
         if (!timestamp) {
             return "Fecha no disponible";
         }
-    
+
         const fecha = new Date(timestamp);
         if (isNaN(fecha.getTime())) {
             return "Fecha no válida";
         }
-    
+
         // Ajustar el día si es necesario
         fecha.setUTCDate(fecha.getUTCDate() + 1);
-    
+
         return fecha.toLocaleDateString('es-ES', {
             year: 'numeric',
             month: '2-digit',
             day: '2-digit',
         });
     };
-    
 
-// Funciones para obtener departamentos y municipios
+
+    // Funciones para obtener departamentos y municipios
     const getDepartamentos = async () => {
         setLoading(true);
-    
+
         try {
-          const response = await axios.get(
-            `${import.meta.env.VITE_API_URL}/departamentos`,
-            {
-              headers: {
-                Authorization: `${user.type} ${user.token}`,
-              },
-            }
-          );
-          setDepartamentos(response.data);
-    
-          setLoading(false);
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_URL}/departamentos`,
+                {
+                    headers: {
+                        Authorization: `${user.type} ${user.token}`,
+                    },
+                }
+            );
+            setDepartamentos(response.data);
+
+            setLoading(false);
         } catch (error) {
-          console.error(" failed:", error);
-          if (error.status >= 400 && error.status < 500) {
-            setError("No se puede.");
-          }
-          //setError(error.message);
-          setLoading(false);
-          //console.log(error.response.status);
+            console.error(" failed:", error);
+            if (error.status >= 400 && error.status < 500) {
+                setError("No se puede.");
+            }
+            //setError(error.message);
+            setLoading(false);
+            //console.log(error.response.status);
         }
-      };
-    
-      const getMunicipiosPorDepartamento = async () => {
+    };
+
+    const getMunicipiosPorDepartamento = async () => {
         setLoading(true);
         setIdMunicipio(0)
         setMunicipios([])
         try {
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_URL}/municipios?departamento_id=${idDepartamento}`,
+                {
+                    headers: {
+                        Authorization: `${user.type} ${user.token}`,
+                    },
+                }
+            );
+            setMunicipios(response.data);
+
+            setLoading(false);
+        } catch (error) {
+            console.error(" failed:", error);
+            if (error.status >= 400 && error.status < 500) {
+                setError("No se puede.");
+            }
+            //setError(error.message);
+            setLoading(false);
+            //console.log(error.response.status);
+        }
+    };
+
+
+    const getEstadosExpedientes = async () => {
+        setLoading(true);
+    
+        try {
           const response = await axios.get(
-            `${import.meta.env.VITE_API_URL}/municipios?departamento_id=${idDepartamento}`,
+            `${import.meta.env.VITE_API_URL}/estadoExpedientes`,
             {
               headers: {
                 Authorization: `${user.type} ${user.token}`,
               },
             }
           );
-          setMunicipios(response.data);
+          setEstadoExpedientes(response.data);
     
           setLoading(false);
         } catch (error) {
@@ -179,153 +209,163 @@ const buscarReportes = async () => {
         }
       };
 
-// Efectos para cargar datos iniciales
-      useEffect(() => {
+
+
+    // Efectos para cargar datos iniciales
+    useEffect(() => {
         getDepartamentos();
-      }, []);
-    
-      useEffect(() => {
+        getEstadosExpedientes();
+    }, []);
+
+    useEffect(() => {
         if (idDepartamento > 0) {
-          getMunicipiosPorDepartamento();
+            getMunicipiosPorDepartamento();
         }
-      }, [idDepartamento]);
+    }, [idDepartamento]);
 
 
 
 
 
-// Función para exportar Excel con logo
-// Función para exportar Excel con logo
-const exportarExcel = async () => {
-    if (reporteList.length === 0) {
-        toast.error("No hay datos para exportar");
-        return;
-    }
+    // Función para exportar Excel con logo
+    // Función para exportar Excel con logo
+    const exportarExcel = async () => {
+        if (reporteList.length === 0) {
+            toast.error("No hay datos para exportar");
+            return;
+        }
 
-    // Imprimir la lista para verificar que contiene datos
-    console.log(reporteList);
+        // Imprimir la lista para verificar que contiene datos
+        console.log(reporteList);
 
-    const worksheetData = reporteList.map(expediente => ({
-        "Nombre": expediente.usuario_nombre,
-        "Rol": expediente.rol_nombre,
-        "Departamento": expediente.departamento_id,
-        "Municipio": expediente.municipio_id,
-        "Polígono": expediente.poligono,
-        "Predio": expediente.predio,
-        "Fecha de Ingreso": convertirFecha(expediente.fechainicio),
-        "Nombre Departamento": expediente.departamento_nombre,
-        "Nombre Municipio": expediente.municipio_nombre,
-    }));
+        const worksheetData = reporteList.map(expediente => ({
+            "Nombre": expediente.usuario_nombre,
+            "Rol": expediente.rol_nombre,
+            "Departamento": expediente.departamento_id,
+            "Municipio": expediente.municipio_id,
+            "Polígono": expediente.poligono,
+            "Predio": expediente.predio,
+            "Fecha de Ingreso": convertirFecha(expediente.fechainicio),
+            "Nombre Departamento": expediente.departamento_nombre,
+            "Nombre Municipio": expediente.municipio_nombre,
+            "Estado": expediente.estado_nombre,
+        }));
 
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Reportes");
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Reportes");
 
-    // Cargar y agregar imagen
-    const imagePath = '/img/ric.jpeg';
-    const response = await fetch(imagePath);
-    const blob = await response.blob();
-    const reader = new FileReader();
+        // Cargar y agregar imagen
+        const imagePath = '/img/ric.jpeg';
+        const response = await fetch(imagePath);
+        const blob = await response.blob();
+        const reader = new FileReader();
 
-    reader.onloadend = async () => {
-        const base64data = reader.result.split(',')[1];
-        const imageId = workbook.addImage({
-            buffer: Buffer.from(base64data, 'base64'),
-            extension: 'jpeg',
-        });
+        reader.onloadend = async () => {
+            const base64data = reader.result.split(',')[1];
+            const imageId = workbook.addImage({
+                buffer: Buffer.from(base64data, 'base64'),
+                extension: 'jpeg',
+            });
 
-        // Agregar imagen que abarca filas 3 a 6
-        worksheet.addImage(imageId, {
-            tl: { col: 1, row: 2 }, // Comienza en A3 (2)
-            br: { col: 5, row: 6 }, // Termina en E6 (6)
-        });
+            // Agregar imagen que abarca filas 3 a 6
+            worksheet.addImage(imageId, {
+                tl: { col: 1, row: 2 }, // Comienza en A3 (2)
+                br: { col: 5, row: 6 }, // Termina en E6 (6)
+            });
 
-        // Celdas de configuración
-        worksheet.getCell('C1').value = "REPORTE DE INGRESO DE EXPEDIENTES CASTRALES POR USUARIO";
-        worksheet.getCell('C1').font = { bold: true, color: { argb: '000000' }, size: 20 }; // Negrita, color negro, tamaño 20
-        worksheet.getRow(1).height = 30; // Ajustar la altura de la fila 1
+            // Celdas de configuración
+            worksheet.getCell('C1').value = "REPORTE DE INGRESO DE EXPEDIENTES CASTRALES POR USUARIO";
+            worksheet.getCell('C1').font = { bold: true, color: { argb: '000000' }, size: 20 }; // Negrita, color negro, tamaño 20
+            worksheet.getRow(1).height = 30; // Ajustar la altura de la fila 1
 
-        // Configurar el ancho de cada columna a 20
-        worksheet.columns = [
-            { width: 20 }, // Nombre
-            { width: 20 }, // Rol
-            { width: 20 }, // Departamento
-            { width: 20 }, // Municipio
-            { width: 20 }, // Polígono
-            { width: 20 }, // Predio
-            { width: 20 }, // Fecha de Ingreso
-            { width: 20 }, // Nombre Departamento
-            { width: 20 }  // Nombre Municipio
-        ];
+            // Configurar el ancho de cada columna a 20
+            worksheet.columns = [
+                { width: 20 }, // Nombre
+                { width: 20 }, // Rol
+                { width: 20 }, // Departamento
+                { width: 20 }, // Municipio
+                { width: 20 }, // Polígono
+                { width: 20 }, // Predio
+                { width: 20 }, // Fecha de Ingreso
+                { width: 20 }, // Nombre Departamento
+                { width: 20 },  // Nombre Municipio
+                { width: 20 }  // Nombre Estado
+            ];
 
-        // Definir encabezados
-        const headers = [
-            'Nombre',
-            'Rol',
-            'Departamento',
-            'Municipio',
-            'Polígono',
-            'Predio',
-            'Fecha de Ingreso',
-            'Nombre Departamento',
-            'Nombre Municipio'
-        ];
+            // Definir encabezados
+            const headers = [
+                'Nombre',
+                'Rol',
+                'Departamento',
+                'Municipio',
+                'Polígono',
+                'Predio',
+                'Fecha de Ingreso',
+                'Nombre Departamento',
+                'Nombre Municipio',
+                'Estado'
+            ];
 
-        // Agregar encabezados en la fila 8 (índice 7)
-        const headerRow = worksheet.addRow(headers);
-        headerRow.font = { bold: true };
-        worksheet.getRow(8).height = 20; // Ajustar altura de fila de encabezados
+            // Agregar encabezados en la fila 8 (índice 7)
+            const headerRow = worksheet.addRow(headers);
+            headerRow.font = { bold: true };
+            worksheet.getRow(8).height = 20; // Ajustar altura de fila de encabezados
 
-        // Agregar los datos a partir de la fila 9
-        const dataRowStartIndex = 9; // fila 9 para los datos
-        worksheet.addRows(worksheetData.map(data => Object.values(data)));
+            // Agregar los datos a partir de la fila 9
+            const dataRowStartIndex = 9; // fila 9 para los datos
+            worksheet.addRows(worksheetData.map(data => Object.values(data)));
 
-        // Agregar "FECHA INICIO" y "FECHA FINAL" en F3 y F4
-        worksheet.getCell('F3').value = "FECHA INICIO";
-        worksheet.getCell('F3').font = { bold: true };
-        worksheet.getCell('G3').value = fechaInicio;
-        worksheet.getCell('G3').font = { bold: true };
+            // Agregar "FECHA INICIO" y "FECHA FINAL" en F3 y F4
+            worksheet.getCell('F3').value = "FECHA INICIO";
+            worksheet.getCell('F3').font = { bold: true };
+            worksheet.getCell('G3').value = fechaInicio;
+            worksheet.getCell('G3').font = { bold: true };
 
-        worksheet.getCell('F4').value = "FECHA FINAL";
-        worksheet.getCell('F4').font = { bold: true, color: { argb: 'FF0000' } };
-        worksheet.getCell('G4').value = fechaFin;
-        worksheet.getCell('G4').font = { bold: true, color: { argb: 'FF0000' } };
+            worksheet.getCell('F4').value = "FECHA FINAL";
+            worksheet.getCell('F4').font = { bold: true, color: { argb: 'FF0000' } };
+            worksheet.getCell('G4').value = fechaFin;
+            worksheet.getCell('G4').font = { bold: true, color: { argb: 'FF0000' } };
 
-        // Definir el rango de la tabla, comenzando desde la fila 8 hasta el final de los datos
-        const startRow = 8; // Fila de encabezados
-        const endRow = worksheet.lastRow.number; // Última fila con datos
+            
 
-        // Crear una tabla
-        worksheet.addTable({
-            name: 'TablaReportes',
-            ref: `A${startRow}:I${endRow}`, // Rango de la tabla
-            headerRow: true,
-            totalsRow: false,
-            style: {
-                theme: 'TableStyleMedium9', // Estilo de tabla (puedes elegir otro)
-                showRowStripes: true
-            },
-            columns: [
-                { name: 'Nombre' },
-                { name: 'Rol' },
-                { name: 'Departamento' },
-                { name: 'Municipio' },
-                { name: 'Polígono' },
-                { name: 'Predio' },
-                { name: 'Fecha de Ingreso' },
-                { name: 'Nombre Departamento' },
-                { name: 'Nombre Municipio' }
-            ],
-            rows: worksheetData.map(data => Object.values(data)), // Asegúrate de agregar las filas aquí
-        });
 
-        const xlsxBuffer = await workbook.xlsx.writeBuffer();
-        const fileName = `reporte_expedientes_${fechaInicio}_al_${fechaFin}.xlsx`;
-        const blobFile = new Blob([xlsxBuffer], { type: 'application/octet-stream' });
-        saveAs(blobFile, fileName);
+            // Definir el rango de la tabla, comenzando desde la fila 8 hasta el final de los datos
+            const startRow = 8; // Fila de encabezados
+            const endRow = worksheet.lastRow.number; // Última fila con datos
+
+            // Crear una tabla
+            worksheet.addTable({
+                name: 'TablaReportes',
+                ref: `A${startRow}:I${endRow}`, // Rango de la tabla
+                headerRow: true,
+                totalsRow: false,
+                style: {
+                    theme: 'TableStyleMedium9', // Estilo de tabla (puedes elegir otro)
+                    showRowStripes: true
+                },
+                columns: [
+                    { name: 'Nombre' },
+                    { name: 'Rol' },
+                    { name: 'Departamento' },
+                    { name: 'Municipio' },
+                    { name: 'Polígono' },
+                    { name: 'Predio' },
+                    { name: 'Fecha de Ingreso' },
+                    { name: 'Nombre Departamento' },
+                    { name: 'Nombre Municipio' },
+                    { name: 'Estado' }
+                ],
+                rows: worksheetData.map(data => Object.values(data)), // Asegúrate de agregar las filas aquí
+            });
+
+            const xlsxBuffer = await workbook.xlsx.writeBuffer();
+            const fileName = `reporte_expedientes_${fechaInicio}_al_${fechaFin}.xlsx`;
+            const blobFile = new Blob([xlsxBuffer], { type: 'application/octet-stream' });
+            saveAs(blobFile, fileName);
+        };
+
+        reader.readAsDataURL(blob);
     };
-
-    reader.readAsDataURL(blob);
-};
 
 
 
@@ -347,7 +387,7 @@ const exportarExcel = async () => {
                             <div className="row">
                                 <div className="col-xxl">
                                     <div className="card mb-4">
-                                    <div className="card-header d-flex justify-content-between align-items-center">
+                                        <div className="card-header d-flex justify-content-between align-items-center">
                                             <h5 className="mb-0">
                                                 <span className="text-muted fw-light">Reportes/</span>Expedientes Ingresados
                                             </h5>
@@ -434,57 +474,77 @@ const exportarExcel = async () => {
                                                         </select>
                                                         <label htmlFor="municipio">Municipio</label>
                                                     </div>
-                                                    
+
+                                                    <div className="form-floating form-floating-outline mb-4">
+                                                        <select
+                                                            disabled={estadoExpedientes.length <= 0}
+                                                            id="estado"
+                                                            className="form-select form-select-lg"
+                                                            value={idEstadoExpediente}
+                                                            onChange={(e) => setIdEstadoExpediente(e.target.value)}
+                                                        >
+                                                            <option value={0}>--- SELECCIONE ---</option>
+                                                            {estadoExpedientes.map((item) => (
+                                                                <option key={item.id} value={item.id}>
+                                                                    {item.nombre}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                        <label htmlFor="departamento">Estado</label>
+                                                    </div>
+
 
 
                                                 </div>
                                             </form>
                                             <div className="row my-4 text-center">
-                                                {[ "GERENTE", "TECNICO-ARCHIVO"].includes(user.user.rol.nombre) && (
+                                                {["GERENTE", "TECNICO-ARCHIVO", "ADMINISTRADOR"].includes(user.user.rol.nombre) && (
                                                     <div className="col-12">
                                                         {loadingReportes ? (
                                                             <div className="spinner-grow text-success" role="status"></div>
                                                         ) : (
                                                             <div className="table-responsive">
-    <table className="table table-bordered table-custom">
-        <thead>
-            <tr>
-                <th scope="col">Nombre</th>
-                <th scope="col">Rol</th>
-                <th scope="col">Departamento</th>
-                <th scope="col">Municipio</th>
-                <th scope="col">Polígono</th>
-                <th scope="col">Predio</th>
-                <th scope="col">Fecha de Ingreso</th>
-                <th scope="col">Nombre Departamento</th>
-                <th scope="col">Nombre Municipio</th>
-            </tr>
-        </thead>
-        <tbody>
-            {reporteList.length === 0 ? (
-                <tr>
-                    <td colSpan="9" className="text-center">
-                        No se encontraron expedientes para el rango de fechas seleccionado.
-                    </td>
-                </tr>
-            ) : (
-                reporteList.map((expediente, index) => (
-                    <tr key={index}>
-                        <td>{expediente.usuario_nombre}</td>
-                        <td>{expediente.rol_nombre}</td>
-                        <td>{expediente.departamento_id}</td>
-                        <td>{expediente.municipio_id}</td>
-                        <td>{expediente.poligono}</td>
-                        <td>{expediente.predio}</td>
-                        <td>{convertirFecha(expediente.fechainicio)}</td>
-                        <td>{expediente.departamento_nombre}</td>
-                        <td>{expediente.municipio_nombre}</td>
-                    </tr>
-                ))
-            )}
-        </tbody>
-    </table>
-</div>
+                                                                <table className="table table-bordered table-custom">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th scope="col">Nombre</th>
+                                                                            <th scope="col">Rol</th>
+                                                                            <th scope="col">Departamento</th>
+                                                                            <th scope="col">Municipio</th>
+                                                                            <th scope="col">Polígono</th>
+                                                                            <th scope="col">Predio</th>
+                                                                            <th scope="col">Fecha de Ingreso</th>
+                                                                            <th scope="col">Nombre Departamento</th>
+                                                                            <th scope="col">Nombre Municipio</th>
+                                                                            <th scope="col">Estado</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {reporteList.length === 0 ? (
+                                                                            <tr>
+                                                                                <td colSpan="9" className="text-center">
+                                                                                    No se encontraron expedientes para el rango de fechas seleccionado.
+                                                                                </td>
+                                                                            </tr>
+                                                                        ) : (
+                                                                            reporteList.map((expediente, index) => (
+                                                                                <tr key={index}>
+                                                                                    <td>{expediente.usuario_nombre}</td>
+                                                                                    <td>{expediente.rol_nombre}</td>
+                                                                                    <td>{expediente.departamento_id}</td>
+                                                                                    <td>{expediente.municipio_id}</td>
+                                                                                    <td>{expediente.poligono}</td>
+                                                                                    <td>{expediente.predio}</td>
+                                                                                    <td>{convertirFecha(expediente.fechainicio)}</td>
+                                                                                    <td>{expediente.departamento_nombre}</td>
+                                                                                    <td>{expediente.municipio_nombre}</td>
+                                                                                    <td>{expediente.estado_nombre}</td>
+                                                                                </tr>
+                                                                            ))
+                                                                        )}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
 
                                                         )}
                                                     </div>

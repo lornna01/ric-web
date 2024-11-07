@@ -119,7 +119,7 @@ const EditarUsuario = () => {
             className="layout-menu menu-vertical menu bg-menu-theme"
             data-bg-class="bg-menu-theme"
           >
-            
+
             <div className="menu-inner-shadow" />
             <ul className="menu-inner py-1 ps ps--active-y">
               {/* Dashboards */}
@@ -129,10 +129,10 @@ const EditarUsuario = () => {
                   <div data-i18n="Dashboards">Dashboards</div>
                   <div className="badge bg-danger rounded-pill ms-auto">5</div>
                 </a>
-               
+
               </li>
               {/* Layouts */}
-             
+
               {/* Front Pages */}
               <li className="menu-item">
                 <a href="#" className="menu-link menu-toggle waves-effect">
@@ -201,7 +201,7 @@ const EditarUsuario = () => {
                 >
                   <i className="menu-icon tf-icons mdi mdi-email-outline" />
                   <div data-i18n="Email">INGRESAR ARCHIVO</div>
-                  
+
                 </Link>
               </li>
               <li className="menu-item">
@@ -652,7 +652,7 @@ const EditarUsuario = () => {
                     >
                       <div className="avatar avatar-online">
                         <img
-                          src="/img/ric.jpeg"
+                          src="/img/avatars/ricc.jpeg"
                           alt
                           className="w-px-40 h-auto rounded-circle"
                         />
@@ -668,7 +668,7 @@ const EditarUsuario = () => {
                             <div className="flex-shrink-0 me-2 pe-1">
                               <div className="avatar avatar-online">
                                 <img
-                                  src="/img/ric.jpeg"
+                                  src="/img/avatars/ricc.jpeg"
                                   alt
                                   className="w-px-40 h-auto rounded-circle"
                                 />

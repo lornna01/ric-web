@@ -280,15 +280,16 @@ async reporteExpediente({ request, response }: HttpContext) {
     const fechaFin = request.input('fechaFin'); // Obtener fecha de fin
     const idDepartamento = request.input('departamento_id'); // Obtener departamento_id
     const idMunicipio = request.input('municipio_id'); // Obtener municipio_id
+    const idEstadoExpediente = request.input('expediente_estado_id'); // Obtener municipio_id
 
     // Construir la consulta
     let query = `
       SELECT * 
-      FROM public.reporteExpedienteNombre 
+      FROM public.reporteExpedienteNombre
       WHERE fechaInicio >= '${fechaInicio}' 
         AND fechaInicio <= '${fechaFin}'
     `;
-
+ 
     // Agregar filtros si se proporcionan
     if (idDepartamento) {
       query += ` AND departamento_id = ${idDepartamento}`;
@@ -297,6 +298,11 @@ async reporteExpediente({ request, response }: HttpContext) {
     if (idMunicipio) {
       query += ` AND municipio_id = ${idMunicipio}`;
     }
+
+    if (idEstadoExpediente) {
+      query += ` AND expediente_estado_id = ${idEstadoExpediente}`; // Agregar comillas alrededor del nombre del estado
+    }
+
 
     // Ejecutar la consulta
     const expedientes = await db.rawQuery(query);

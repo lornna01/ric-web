@@ -7,11 +7,9 @@ import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import toast from "react-hot-toast";
 
+import UnidadList from "../components/UnidadList";
 
-
-import DepartamentoList from "../components/DepartamentoList"
-
-const NuevoDepartamento = () => {
+const NuevoUnidad = () => {
   const { login } = useAuth();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -27,16 +25,15 @@ const NuevoDepartamento = () => {
   const [error, setError] = useState("");
   const [mensaje, setMensaje] = useState();
   const [loading, setLoading] = useState(false);
-  const [loadingDepartamentos, setLoadingDepartamentos] = useState(false);
+  const [loadingUnidades, setLoadingUnidades] = useState(false);
 
 
   const [editing, setEditing] = useState(false);
 
-  const [departamentoList, setDepartamentoList] = useState([]);
-  const [nombre, setNombre] = useState("");
+  const [unidadList, setUnidadList] = useState([]);
+  const [unidad, setUnidad] = useState();
 
-  const [departamento, setDepartamento] = useState();
-  const [estado, setEstado] = useState();
+  const [nombre, setNombre] = useState();
 
 
   const save = async () => {
@@ -45,24 +42,21 @@ const NuevoDepartamento = () => {
     if (!nombre) {
       setError("Ingrese el nombre");
       return;
-    } else if (!estado) {
-      setError("Ingrese el estado");
-      return;
     }
+
     setLoading(true);
 
     try {
       const response = await axiosInstance.post(
-        `${import.meta.env.VITE_API_URL}/departamentos`,
+        `${import.meta.env.VITE_API_URL}/unidades`,
         {
           usuario_id: user?.user?.id,
-          nombre,
-          estado
+          nombre
         }
       );
 
       if (response.status === 201) {
-        toast.success("DEPTO. creado con éxito!!");
+        toast.success("Unidad creada con éxito!!")
         //setMensaje("Vehículo creado con éxito!!");
         window.location.reload()
         //navigate('/vehiculos/nuevo');
@@ -70,10 +64,10 @@ const NuevoDepartamento = () => {
       setLoading(false);
       setError();
     } catch (error) {
-      if (error.response.status === 400) {
+      if (error.response?.status === 400) {
         setError(error.response.data.message);
       }
-      if (error.status >= 400 && error.response.status < 500) {
+      if (error.status >= 400 && error.response?.status < 500) {
         setError("Error inesperado");
       }
       if (error.status >= 500) {
@@ -98,23 +92,18 @@ const NuevoDepartamento = () => {
     if (!nombre) {
       setError("Ingrese el nombre");
       return;
-    } else if (!estado) {
-      setError("Ingrese el estado");
-      return;
     }
 
     setLoading(true);
 
     try {
       const response = await axiosInstance.put(
-        `${import.meta.env.VITE_API_URL}/departamentos/${departamento.id}`,
+        `${import.meta.env.VITE_API_URL}/unidades/${unidad.id}`, // Usa el ID del rol para la URL
         {
           usuario_id: user?.user?.id,
-          nombre,
-          estado
+          nombre
         }
       );
-
       if (response.status === 200) {
         toast.success("Actualizado con éxito!!");
         setEditing(false);
@@ -150,21 +139,20 @@ const NuevoDepartamento = () => {
 
 
 
-
-  const getDepartamentos = async () => {
+  const getUnidades = async () => {
     setMensaje("");
     setError("");
-    setLoadingDepartamentos(true);
+    setLoadingUnidades(true);
 
     try {
-      const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/departamentos`);
+      const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/unidades`);
 
 
       if (response.status === 200) {
         //setMensaje("Vehículo creado con éxito!!");
         console.log(response.data)
-        setDepartamentoList(response.data)
-        setLoadingDepartamentos(false)
+        setUnidadList(response.data)
+        setLoadingUnidades(false)
       }
       setLoading(false);
       setError();
@@ -174,10 +162,10 @@ const NuevoDepartamento = () => {
         setError(error.response.data.message);
         toast.error(error.response.data.message)
         setNombre('')
-        setEstado('')
+
 
       }
-      if (error.status >= 400 && error.response.status < 500) {
+      if (error.status >= 400 && error.response?.status < 500) {
         setError("Error inesperado");
       }
       if (error.status >= 500) {
@@ -197,12 +185,15 @@ const NuevoDepartamento = () => {
   };
 
 
+
+
   useEffect(() => {
-    getDepartamentos()
+    getUnidades()
     if (editing) {
-      setNombre(departamento?.nombre)
-      setEstado(departamento?.estado)
+      setNombre(unidad?.nombre)
+
     }
+
   }, [editing])
 
   return (
@@ -223,9 +214,10 @@ const NuevoDepartamento = () => {
                   <div className="card mb-4">
                     <div className="card-header d-flex justify-content-between align-items-center">
                       <h5 className="mb-0">
-                        <span class="text-muted fw-light">Departamentos/</span>{" "}
-                        Nuevo Depto
+                        <span class="text-muted fw-light">Unidades/</span>{" "}
+                        Gestionar
                       </h5>
+
                     </div>
                     <div className="card-body">
                       {mensaje && (
@@ -241,42 +233,26 @@ const NuevoDepartamento = () => {
                       <form>
 
                         <div class="input-group">
-                          <div className="form-floating form-floating-outline mb-4">
+                          <div class="form-floating form-floating-outline mb-4">
                             <input
                               type="text"
-                              maxLength={60}
                               className="form-control"
                               id="nombre"
-                              placeholder="Nombre del Departamento"
+                              placeholder="UNIDAD PERTENENCIA"
                               value={nombre}
                               onChange={(e) => setNombre(e.target.value)}
+
                             />
-                            <label htmlFor="nombre">
-                              Nombre del Departamento
-                            </label>
-                          </div>
-
-                          
-                        </div>
-
-
-                        <div class="input-group">
-                          <div class="form-floating form-floating-outline mb-4">
-                            <select
-                              className="form-select"
-                              onChange={(e) => setEstado(e.target.value)} value={estado}>
-                              <option value="">-- Seleccionar --</option>
-                              <option value="ACTIVO">ACTIVO</option>
-                              <option value="INACTIVO">INACTIVO</option>
-
-                            </select>
                             <label for="exampleFormControlSelect1">
-                              ESTADO DEL DEPTO
+                              NOMBRE DE LA UNIDAD
                             </label>
                           </div>
 
                         </div>
+                        <div class="input-group">
 
+
+                        </div>
 
 
 
@@ -292,6 +268,15 @@ const NuevoDepartamento = () => {
                             <i class="menu-icon tf-icons mdi mdi-sync"></i>
                             Guardar cambios
                           </button>
+                          <button
+                            type="button"
+                            className="btn btn-dark waves-effect waves-light mx-3"
+                            onClick={() => window.location.reload()}
+                            disabled={loading}
+                          >
+                            <i class="menu-icon tf-icons mdi mdi-cancel"></i>
+                            Cancelar
+                          </button>
 
                         </span>) : <button
                           type="button"
@@ -303,6 +288,7 @@ const NuevoDepartamento = () => {
                           Guardar
                         </button>}
 
+
                         {mensaje && (
                           <div
                             className="alert alert-success mt-4"
@@ -313,25 +299,20 @@ const NuevoDepartamento = () => {
                         )}
 
 
-                        {error && (
-                          <div className="alert alert-danger mt-4" role="alert">
-                            {error}!
-                          </div>
-                        )}
                       </form>
 
                       <div className="row my-4 text-center">
                         {/* Deposit / Withdraw */}
                         {/* Data Tables */}
-                        {user.user.rol.nombre == "TECNICO-ARCHIVO" && (
+                        {user?.user?.rol?.nombre && ["ADMINISTRADOR", "ASISTENTE-ADMINISTRATIVO", "TECNICO-BODEGA"].includes(user.user.rol.nombre) && (
                           <div className="col-12">
-                            {!loadingDepartamentos ? <DepartamentoList
+                            {!loadingUnidades ? <UnidadList
 
-                              departamentoList={departamentoList}
-                              getDepartamentos={getDepartamentos}
+                              unidadList={unidadList}
+                              getUnidades={getUnidades}
                               error={error}
-                              departamento={departamento}
-                              setDepartamento={setDepartamento}
+                              unidad={unidad}
+                              setUnidad={setUnidad}
                               setEditing={setEditing}
                               user={user}
                               setMensaje={setMensaje}
@@ -345,7 +326,6 @@ const NuevoDepartamento = () => {
 
                         {/*/ Data Tables */}
                       </div>
-
 
                       <div className="row my-4 text-center">
                         {/* Deposit / Withdraw */}
@@ -361,14 +341,23 @@ const NuevoDepartamento = () => {
                 </div>
               </div>
             </div>
+            {/* / Content */}
+            {/* Footer */}
             <Footer />
+            {/* / Footer */}
             <div className="content-backdrop fade" />
           </div>
+          {/* Content wrapper */}
         </div>
+        {/* / Layout page */}
       </div>
+      {/* Overlay */}
       <div className="layout-overlay layout-menu-toggle" />
+
     </div>
   );
 };
 
-export default NuevoDepartamento;
+export default NuevoUnidad;
+
+

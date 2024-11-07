@@ -3,8 +3,20 @@ import axios from "axios";
 import { API_URL_AUTH } from "../services/auth/authConstants";
 import toast from "react-hot-toast";
 
-const EstadoExpedienteList = ({ user,estadoExpedienteList,setMensaje,estadoExpediente,setEstadoExpediente,setEditing, loading,setLoading,error,setError }) => {
-  
+const EstadoExpedienteList = ({
+  user,
+  getEstadoExpedientes,
+  setEstadoExpediente,
+  estadoExpedienteList,
+  setMensaje,
+  estadoExpediente,
+  setEditing,
+  loading,
+  setLoading,
+  error,
+  setError
+}) => {
+
   const axiosInstance = axios.create({
     baseURL: `${import.meta.env.VITE_API_URL}`, // URL base de tu API
     headers: {
@@ -12,15 +24,33 @@ const EstadoExpedienteList = ({ user,estadoExpedienteList,setMensaje,estadoExped
       Authorization: `${user.type} ${user.token}`, // Token de autorización
     },
   });
-  
-   
+
+
+  const deleteEstadoExpediente = async (id) => {
+    setLoading(true);
+
+    try {
+      const response = await axiosInstance.delete(`${import.meta.env.VITE_API_URL}/estadoExpedientes/${id}`);
+      getEstadoExpedientes();
+      setLoading(false);
+    } catch (error) {
+      console.error("Login failed:", error);
+      if (error.response.status >= 400 && error.response.status < 500) {
+        setError("No se logró eliminar.");
+      }
+      setError(error.message);
+      setLoading(false);
+      //console.log(error.response.status);
+    }
+  };
+
   const save = async () => {
     setMensaje("");
     setError("");
     if (!nombre) {
       toast.error("Ingrese el nombre");
       return;
-    } 
+    }
 
     setLoading(true);
 
@@ -32,7 +62,7 @@ const EstadoExpedienteList = ({ user,estadoExpedienteList,setMensaje,estadoExped
           nombre
         }
       );
-      
+
 
       if (response.status === 201) {
         toast.success("Estado cread con éxito!!")
@@ -66,16 +96,25 @@ const EstadoExpedienteList = ({ user,estadoExpedienteList,setMensaje,estadoExped
     }
   };
 
-  
-/*
-  const deleteConfirm = async (vehi) => {
-    if (confirm("Realmente quiere eliminar a "+vehi.placa+"??")) {
-      await deleteVehiculo(vehi);
-      //getUsers();
-    } 
-    
+
+
+  const deleteConfirm = async (estadoExpediente) => {
+    if (confirm("Realmente quiere eliminar a " + estadoExpediente.nombre + "??")) {
+      await deleteEstadoExpediente(estadoExpediente.id);
+      toast.success("Registro Eliminado!!")
+      //setTimeout(() => {
+      //window.location.reload()
+      //}, 1500);
+      getEstadoExpedientes();
+    }
+
+
   }
-*/
+
+  useEffect(() => {
+    getEstadoExpedientes();
+  }, []);
+
 
 
 
@@ -95,7 +134,7 @@ const EstadoExpedienteList = ({ user,estadoExpedienteList,setMensaje,estadoExped
           <thead className="table-light">
             <tr>
               <th className="text-truncate">Nombre</th>
-                          
+
               <th className="text-truncate">
                 Acciones
               </th>
@@ -109,11 +148,11 @@ const EstadoExpedienteList = ({ user,estadoExpedienteList,setMensaje,estadoExped
                     <div className="d-flex align-items-center">
                       <div>
                         <h6 className="mb-0 text-truncate">{item.nombre}</h6>
-                        
+
                       </div>
                     </div>
                   </td>
-                  
+
                   <td>
                     <button
                       type="button"
@@ -125,8 +164,19 @@ const EstadoExpedienteList = ({ user,estadoExpedienteList,setMensaje,estadoExped
                     >
                       <i className="bx bx-edit"></i>
                     </button>
-                    
-                    
+
+                    <button
+                      onClick={() => {
+                        deleteConfirm(item)
+                      }}
+                      disabled={item.nombre === 'COMPLETO'}
+                      type="button"
+                      className="btn rounded-pill btn-danger m-1"
+                    >
+                      <i className="bx bx-trash"></i>
+                    </button>
+
+
                   </td>
                 </tr>
               );
@@ -135,7 +185,7 @@ const EstadoExpedienteList = ({ user,estadoExpedienteList,setMensaje,estadoExped
         </table>
       </div>
       {/* Modal 1*/}
-      
+
     </div>
   );
 };

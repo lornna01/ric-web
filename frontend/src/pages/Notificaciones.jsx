@@ -24,7 +24,7 @@ const Notificaciones = () => {
       Authorization: `${user.type} ${user.token}`, // Token de autorización
     },
   });
-  
+
 
 
   const [error, setError] = useState("");
@@ -84,16 +84,16 @@ const Notificaciones = () => {
     }
   }
 
- 
 
- 
 
- 
 
-  useEffect(() =>{
-    
+
+
+
+  useEffect(() => {
+
     getNotificaciones()
- },[editing])
+  }, [editing])
 
   return (
     <div className="layout-wrapper layout-content-navbar">
@@ -107,11 +107,11 @@ const Notificaciones = () => {
           <div className="content-wrapper">
             {/* Content */}
 
-           <di v className="container-xxl flex-grow-1 container-p-y">
+            <di v className="container-xxl flex-grow-1 container-p-y">
               <div className="row">
                 <div className="col-xxl">
                   <div className="card mb-4">
-                    
+
                     <div className="card-body">
                       {mensaje && (
                         <div className="alert alert-success" role="alert">
@@ -123,39 +123,39 @@ const Notificaciones = () => {
                           {error}!
                         </div>
                       )}
-                     
+
 
                       <div className="row my-4 text-center">
-                      {/* Deposit / Withdraw */}
-                      {/* Data Tables */}
-                      {user.user.rol.nombre == "TECNICO-ARCHIVO" && (
-                        <div className="col-12">
+                        {/* Deposit / Withdraw */}
+                        {/* Data Tables */}
+                        {user.user.rol.nombre == "TECNICO-ARCHIVO" && (
+                          <div className="col-12">
                             {!loadingNotificaciones ? <NotificacionesList
-                              notificacionesList ={notificacionesList}
+                              notificacionesList={notificacionesList}
                               getNotificaciones={getNotificaciones}
                               setEditing={setEditing}
                               user={user}
                               setMensaje={setMensaje}
-                            setError={setError}
-                            loading={loading}
-                            setLoading={setLoading}
-                          />:(<div className="spinner-grow text-success" role="status">
-                        </div>)}
-                        </div>
-                      )}
+                              setError={setError}
+                              loading={loading}
+                              setLoading={setLoading}
+                            /> : (<div className="spinner-grow text-success" role="status">
+                            </div>)}
+                          </div>
+                        )}
 
-                      {/*/ Data Tables */}
+                        {/*/ Data Tables */}
                       </div>
 
                       <div className="row my-4 text-center">
-                      {/* Deposit / Withdraw */}
-                      {/* Data Tables */}
-                      
+                        {/* Deposit / Withdraw */}
+                        {/* Data Tables */}
 
-                      {/*/ Data Tables */}
+
+                        {/*/ Data Tables */}
                       </div>
-                      
-                      
+
+
                     </div>
                   </div>
                 </div>
@@ -173,7 +173,7 @@ const Notificaciones = () => {
       </div>
       {/* Overlay */}
       <div className="layout-overlay layout-menu-toggle" />
-      
+
     </div>
   );
 };
